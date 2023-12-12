@@ -1,0 +1,18 @@
+[]regarding cmake tools
+this project used the quick start feature from cmake tools vscode extension
+
+[]regarding cmake
+   []this project used cmake 3.28 in windows
+      []for configuring vscode cmake setup boilerplate: https://stackoverflow.com/questions/70197831/unable-to-determine-what-cmake-generator-to-use-vs-code-windows-10
+
+[]regarding default build method
+this project mingw-w64, which was setup according to https://code.visualstudio.com/docs/cpp/config-mingw
+
+[]regarding ncurses on windows
+https://stackoverflow.com/questions/75350336/ncurses-program-using-mingw-w64-fails-with-error-opening-terminal-xterm
+
+[]windows nonsense:
+Suggestion [3,General]: The command main.exe was not found, but does exist in the current location. Windows PowerShell does not load commands from the current location by default. If you trust this command, instead type: ".\main.exe". See "get-help about_Command_Precedence" for more details.
+PS C:\Users\flap\repos\gridy\gridy> .\main.exe
+output:
+aaaaaaaaaaaaaaaaaa
