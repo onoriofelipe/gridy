@@ -1,18 +1,83 @@
 []regarding cmake tools
+   [x]worked
 this project used the quick start feature from cmake tools vscode extension
 
 []regarding cmake
-   []this project used cmake 3.28 in windows
+   [x]this project used cmake 3.28 in windows with default installer from cmake.org
       []for configuring vscode cmake setup boilerplate: https://stackoverflow.com/questions/70197831/unable-to-determine-what-cmake-generator-to-use-vs-code-windows-10
 
 []regarding default build method
+   [x]worked
 this project mingw-w64, which was setup according to https://code.visualstudio.com/docs/cpp/config-mingw
 
 []regarding ncurses on windows
+   [x]untested yet, may not be necessary if basic terminal buffering is enough
 https://stackoverflow.com/questions/75350336/ncurses-program-using-mingw-w64-fails-with-error-opening-terminal-xterm
 
 []windows nonsense:
+   [x]worked after weird windows terminal syntax
 Suggestion [3,General]: The command main.exe was not found, but does exist in the current location. Windows PowerShell does not load commands from the current location by default. If you trust this command, instead type: ".\main.exe". See "get-help about_Command_Precedence" for more details.
 PS C:\Users\flap\repos\gridy\gridy> .\main.exe
 output:
 aaaaaaaaaaaaaaaaaa
+
+[]baseline of how to build something in windows with mingw-w64:
+   [x]was not used
+choco install mingw
+cmake -B build -G Ninja -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_COMPILER=C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-g++.exe
+
+[]installing boost with UCRT msys2 terminal, like described here: https://www.msys2.org/docs/package-management/
+   [x]worked
+flap@DESKTOP-C9O701C UCRT64 ~
+$ pacman -Ss boost
+clangarm64/mingw-w64-clang-aarch64-boost 1.81.0-7
+    Free peer-reviewed portable C++ source libraries (mingw-w64)
+mingw32/mingw-w64-i686-boost 1.81.0-7
+    Free peer-reviewed portable C++ source libraries (mingw-w64)
+mingw64/mingw-w64-x86_64-boost 1.81.0-7
+    Free peer-reviewed portable C++ source libraries (mingw-w64)
+ucrt64/mingw-w64-ucrt-x86_64-boost 1.81.0-7
+    Free peer-reviewed portable C++ source libraries (mingw-w64)
+clang32/mingw-w64-clang-i686-boost 1.81.0-7
+    Free peer-reviewed portable C++ source libraries (mingw-w64)
+clang64/mingw-w64-clang-x86_64-boost 1.81.0-7
+    Free peer-reviewed portable C++ source libraries (mingw-w64)
+flap@DESKTOP-C9O701C UCRT64 ~
+$ pacman -S mingw-w64-ucrt-x86_64-boost
+resolving dependencies...
+looking for conflicting packages...
+Packages (2) mingw-w64-ucrt-x86_64-icu-72.1-1  mingw-w64-ucrt-x86_64-boost-1.81.0-7
+Total Download Size:    37.54 MiB
+Total Installed Size:  288.25 MiB
+:: Proceed with installation? [Y/n] Y
+:: Retrieving packages...
+ mingw-w64-ucrt-x86_64-boos...    15.6 MiB  3.13 MiB/s 00:05 [###############################] 100%
+ mingw-w64-ucrt-x86_64-icu-...    22.0 MiB  2.40 MiB/s 00:09 [###############################] 100%
+ Total (2/2)                      37.5 MiB  4.04 MiB/s 00:09 [###############################] 100%
+(2/2) checking keys in keyring                               [###############################] 100%
+(2/2) checking package integrity                             [###############################] 100%
+(2/2) loading package files                                  [###############################] 100%
+(2/2) checking for file conflicts                            [###############################] 100%
+(2/2) checking available disk space                          [###############################] 100%
+:: Processing package changes...
+(1/2) installing mingw-w64-ucrt-x86_64-icu                   [###############################] 100%
+(2/2) installing mingw-w64-ucrt-x86_64-boost                 [###############################] 100%
+Optional dependencies for mingw-w64-ucrt-x86_64-boost
+    mingw-w64-ucrt-x86_64-python: For Boost.Python [installed]
+    mingw-w64-ucrt-x86_64-python-numpy: For Boost.Python (NumPy)
+
+
+[]boost linking for compiled lib: https://stackoverflow.com/questions/3897839/how-to-link-c-program-with-boost-using-cmake
+   [x]untested yet
+FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+ADD_EXECUTABLE( anyExecutable myMain.cpp )
+TARGET_LINK_LIBRARIES( anyExecutable LINK_PUBLIC ${Boost_LIBRARIES} )
+
+[]boost linking for header-only lib: https://cmake.org/cmake/help/git-master/module/FindBoost.html
+   [x]worked
+find_package(Boost 1.81.0)
+if(Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
+  add_executable(foo foo.cc)
+endif()

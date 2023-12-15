@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(gridy VERSION 0.1.0 LANGUAGES C CXX)
+project(gridey VERSION 0.1.0 LANGUAGES C CXX)
+
+find_package(Boost 1.81.0)
+# if(Boost_FOUND)
+include_directories(${Boost_INCLUDE_DIRS})
+#   add_executable(foo foo.cc)
+# endif()
 
 include(CTest)
 enable_testing()
