@@ -10,7 +10,9 @@ include_directories(${Boost_INCLUDE_DIRS})
 include(CTest)
 enable_testing()
 
-add_executable(gridy main.cpp)
+add_executable(gridy)
+target_include_directories(gridy PUBLIC include)
+target_sources(gridy PUBLIC ./main.cpp include/Matrix.h include/AsciiScreen.h)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
