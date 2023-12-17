@@ -5,6 +5,8 @@
 #include <algorithm> // std::clamp
 #include <numeric> // std::iota
 #include <vector>
+#include <thread> // this_thread sleep
+#include <chrono> // milliseconds and seconds
 
 using uchar = unsigned char;
 
@@ -25,8 +27,10 @@ public:
       for(auto j = 0; j < H; ++j){
          buffer[j*(W+1) + W] = '\n';
       }
+      buffer[H*(W+1)-1] = '.';
       buffer[H*(W+1)] = '\0';
    }
+   uint32_t cursor_line{H};
    std::array<uchar, H * (W + 1) + 1> buffer;
    ///[]TODO: rewrite api using ranges/view syntax
    uchar& pixel_ref(uint32_t column, uint32_t line){
@@ -63,7 +67,7 @@ public:
    }
    // do operation f for each pixel
    template <typename F>
-   void for_pixel(uint32_t column, uint32_t line, const F& f){
+   void for_pixel(const F& f){
       for(auto j = 0; j < H; ++j){
          for_line(j, f);
       }
@@ -82,12 +86,16 @@ public:
          pixel_ref(column, j) = f(column, j);
       }
    }
+   // print whatever is in the buffer
    void stdout_print(){
+      clear_screen();
       const char * const c_string = reinterpret_cast<const char* const>( buffer.data() );
       std::cout << c_string << std::flush;
    }
+   // use ansi witchcraft for clearing screen
    void clear_screen(){
-      for(auto j = 0; j < H; ++j){};
+      // for(auto j = 0; j < H; ++j){};
+      std::cout << "\r\x1b[2J";
    }
 };
 
@@ -113,6 +121,14 @@ int main(){
    uchar min {32};
    uchar max {126};
    auto lambda = [=](uint32_t line, uint32_t column){ return std::clamp(static_cast<uchar>(line + column), min, max); };
+   auto increasing_character = [](){
+      static uchar c = 'A';
+      return ( [c](uint32_t /*line*/, uint32_t /*column*/){ return c; } );
+      ++c;
+   };
+   auto return_X = [](uint32_t, uint32_t){ return 'X'; };
+   auto return_A = [](uint32_t, uint32_t){ return 'A'; };
+   auto return_F = [](uint32_t, uint32_t){ return 'F'; };
    std::vector<uint32_t> lines(50,0);
    std::iota(lines.begin(), lines.end(), static_cast<uint32_t>(0));
    for(const auto line: lines){
@@ -120,10 +136,22 @@ int main(){
    }
    screen.write_borders();
    screen.stdout_print();
-   std::cout << "   XXX" << std::flush;
+   std::cout << "\x1b[2JAAAAAAAAAA" << std::flush;
+   std::cout << "\r\x1b[2J" << std::flush;
+   screen.for_pixel(return_A);
+   screen.stdout_print();
+   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+   // std::cout << "\r\x1b[2J" << std::flush;
+   screen.for_pixel(return_F);
+   screen.stdout_print();
+   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+   screen.for_pixel(return_X);
+   screen.stdout_print();
+   // std::cout << "   XXX" << std::flush;
    // std::cout << "\x1b[1A\x1b[2K" << std::flush;
-   std::cout << "\x1b[1ABBBB" << std::flush;
-   std::cout << "\x1b[1A\rCCCC\n" << std::flush;
-   std::cout << "\x1b[1A\x1b[1A\x1b[1A" << std::flush;
+   // std::cout << "\x1b[1ABBBB" << std::flush;
+   // std::cout << "\x1b[1A\rCCCC\n" << std::flush;
+   // std::cout << "\x1b[1A\x1b[1A\x1b[1A" << std::flush;
    // std::cout << "\x1b[1A\x1b[2K\x1b[1A\x1b[2K" << std::flush;
+   std::cin >> min;
 }
