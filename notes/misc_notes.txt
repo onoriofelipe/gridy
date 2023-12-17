@@ -81,3 +81,36 @@ if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   add_executable(foo foo.cc)
 endif()
+
+[]ansi witchcraft: https://web.archive.org/web/20200415203148/http://ascii-table.com/ansi-escape-sequences-vt-100.php
+   Esc[ValueA	Move cursor up n lines	CUU
+   Esc[ValueB	Move cursor down n lines	CUD
+   Esc[ValueC	Move cursor right n lines	CUF
+   Esc[ValueD	Move cursor left n lines	CUB
+   Esc[H	Move cursor to upper left corner	cursorhome
+   Esc[;H	Move cursor to upper left corner	cursorhome
+   Esc[Line;ColumnH	Move cursor to screen location v,h	CUP
+   Esc[f	Move cursor to upper left corner	hvhome
+   Esc[;f	Move cursor to upper left corner	hvhome
+   Esc[Line;Columnf	Move cursor to screen location v,h	CUP
+   EscD	Move/scroll window up one line	IND
+   EscM	Move/scroll window down one line	RI
+   EscE	Move to next line	NEL
+   Esc7	Save cursor position and attributes	DECSC
+   Esc8	Restore cursor position and attributes	DECSC
+   EscH	Set a tab at the current column	HTS
+   Esc[g	Clear a tab at the current column	TBC
+   Esc[0g	Clear a tab at the current column	TBC
+   Esc[3g	Clear all tabs	TBC
+   Esc#3	Double-height letters, top half	DECDHL
+   Esc#4	Double-height letters, bottom half	DECDHL
+   Esc#5	Single width, single height letters	DECSWL
+   Esc#6	Double width, single height letters	DECDWL
+   Esc[K	Clear line from cursor right	EL0
+   Esc[0K	Clear line from cursor right	EL0
+   Esc[1K	Clear line from cursor left	EL1
+   Esc[2K	Clear entire line	EL2
+   Esc[J	Clear screen from cursor down	ED0
+   Esc[0J	Clear screen from cursor down	ED0
+   Esc[1J	Clear screen from cursor up	ED1
+   Esc[2J	Clear entire screen	ED2
