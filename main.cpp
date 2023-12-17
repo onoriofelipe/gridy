@@ -16,7 +16,6 @@ using uchar = unsigned char;
  *  for newline characters and one extra ending null character
  */
 // valid for H >= 1, W >= 1
-/// []TODO: try concepts for enforcing valid ranges
 template <uint64_t H, uint64_t W>
 class AsciiScreen{
 public:
@@ -90,11 +89,15 @@ public:
    void stdout_print(){
       clear_screen();
       const char * const c_string = reinterpret_cast<const char* const>( buffer.data() );
+      // std::cout << "\r\x1b[2J\x1b[H" << c_string << std::flush; // inline
       std::cout << c_string << std::flush;
+   }
+   void reset_cursor_position(){
+      std::cout << "\x1b[H";
    }
    // use ansi witchcraft for clearing screen
    void clear_screen(){
-      // for(auto j = 0; j < H; ++j){};
+      reset_cursor_position();
       std::cout << "\r\x1b[2J";
    }
 };
@@ -115,43 +118,39 @@ int main(){
    // emitter(23);
    // emitter(14);
    auto screen = AsciiScreen<50,100>{};
-   // screen.write_horizontal(3, '\\');
-   // screen.write_vertical(6, '/');
-   // auto clamp = [](uint32_t x, uint32_t min, uint32_t max){ return };
    uchar min {32};
    uchar max {126};
    auto lambda = [=](uint32_t line, uint32_t column){ return std::clamp(static_cast<uchar>(line + column), min, max); };
-   auto increasing_character = [](){
-      static uchar c = 'A';
-      return ( [c](uint32_t /*line*/, uint32_t /*column*/){ return c; } );
+   auto generate_increasing_character_lambda = [](){
+      static uchar c = 'a';
+      auto lambda = [](uint32_t /*line*/, uint32_t /*column*/){ return c; };
       ++c;
+      return ( lambda );
    };
    auto return_X = [](uint32_t, uint32_t){ return 'X'; };
    auto return_A = [](uint32_t, uint32_t){ return 'A'; };
    auto return_F = [](uint32_t, uint32_t){ return 'F'; };
-   std::vector<uint32_t> lines(50,0);
-   std::iota(lines.begin(), lines.end(), static_cast<uint32_t>(0));
-   for(const auto line: lines){
-      screen.for_line(line, lambda);
+
+   auto animation_duration = std::chrono::milliseconds(5000);
+   auto animation_speed_in_fps = 10;
+   auto total_frames = animation_duration.count() * animation_speed_in_fps / 1000;
+   auto frame_duration = std::chrono::milliseconds(1000) / animation_speed_in_fps;
+   auto before_program_loop = std::chrono::system_clock::now();
+   for(auto i = 0; i < total_frames; ++i){
+      std::this_thread::sleep_for(frame_duration);
+      screen.for_pixel(generate_increasing_character_lambda());
+      screen.write_borders();
+      screen.stdout_print();
    }
-   screen.write_borders();
-   screen.stdout_print();
-   std::cout << "\x1b[2JAAAAAAAAAA" << std::flush;
-   std::cout << "\r\x1b[2J" << std::flush;
-   screen.for_pixel(return_A);
-   screen.stdout_print();
-   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-   // std::cout << "\r\x1b[2J" << std::flush;
-   screen.for_pixel(return_F);
-   screen.stdout_print();
-   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-   screen.for_pixel(return_X);
-   screen.stdout_print();
-   // std::cout << "   XXX" << std::flush;
-   // std::cout << "\x1b[1A\x1b[2K" << std::flush;
-   // std::cout << "\x1b[1ABBBB" << std::flush;
-   // std::cout << "\x1b[1A\rCCCC\n" << std::flush;
-   // std::cout << "\x1b[1A\x1b[1A\x1b[1A" << std::flush;
-   // std::cout << "\x1b[1A\x1b[2K\x1b[1A\x1b[2K" << std::flush;
-   std::cin >> min;
+   auto after_program_loop = std::chrono::system_clock::now();
+   auto program_duration_approximately = std::chrono::duration_cast<std::chrono::milliseconds>( after_program_loop - before_program_loop );
+   screen.clear_screen();
+   std::cout <<   "program duration(ms): "             << program_duration_approximately.count() << std::endl;
+   std::cout <<   "expected animation_duration(ms): "  << animation_duration.count()             << std::endl;
+   std::cout <<   "overhead: "                         << ( static_cast<float>(program_duration_approximately.count()) / animation_duration.count() - 1 ) * 100 << "%" << std::endl;
+   std::cout <<   "animation_speed_in_fps: "           << animation_speed_in_fps                 << std::endl;
+   std::cout <<   "total_frames: "                     << total_frames                           << std::endl;
+   std::cout <<   "frame_duration(ms): "               << frame_duration.count()                 << std::endl;
+   std::cout <<   "Press ENTER to terminate."          << std::endl;
+   std::cin.ignore();
 }

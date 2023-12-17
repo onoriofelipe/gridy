@@ -1,0 +1,26 @@
+[]add double-buffering to ascii screen
+   []use std::array<std::array> for N buffers, N==2
+   []track current buffer index, update after printing
+   []define how to use multiple threads, one thread just continuously prints at defined frame speed
+
+[]screen with normalized device coordinates that prints to another device (the existing ascii screen)
+   []projection matrix
+      []matrix operations
+         []addition, scalar multiplication, vector multiplication
+      []vector operations
+         []addition, subtraction, normal, scalar product, vector dot product, vector cross product
+   []point printing
+   []line printing
+   []triangle printing
+   []circle
+   []distance functions
+      []1-dimensional color using character fill percentage as color metric
+      []color character map
+      []interpolation
+      []clamping
+      []point distance
+      []circle distance
+      []line distance
+      []heart distance
+
+[]rewrite silly template restrictions as concepts

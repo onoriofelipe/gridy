@@ -102,3 +102,33 @@ flap@DESKTOP-C9O701C UCRT64 /c/Users/flap/repos/gridy/gridyjklmnopqrstuvwxyz{|}~
 $ CC456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~~~~~~~~~~~~~~~~~~~~~|
 +-----BBBB-----------------------------------------------------------------------------------------+
    XXX
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+with clear_screen() function call:
+program duration(ms): 5959
+expected animation_duration(ms): 5000
+overhead: 19.18%
+animation_speed_in_fps: 15
+total_frames: 75
+frame_duration(ms): 66
+Press ENTER to terminate.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+with inline clear screen control character:
+program duration(ms): 6017
+expected animation_duration(ms): 5000
+overhead: 20.34%
+animation_speed_in_fps: 15
+total_frames: 75
+frame_duration(ms): 66
+Press ENTER to terminate.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+with clear_screen() function call:
+program duration(ms): 5581
+expected animation_duration(ms): 5000
+overhead: 11.62%
+animation_speed_in_fps: 10
+total_frames: 50
+frame_duration(ms): 100
+Press ENTER to terminate.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
