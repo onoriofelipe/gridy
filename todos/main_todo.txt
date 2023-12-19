@@ -4,24 +4,33 @@
    []define how to use multiple threads, one thread just continuously prints at defined frame speed
 
 []screen with normalized device coordinates that prints to another device (the existing ascii screen)
+   [x]interpolation from normalized coordinates to specific device coordinates
    []projection matrix
       [-]matrix operations
          [+]addition, scalar multiplication, vector multiplication
       [-]vector operations
          [-]addition, subtraction, normal, scalar product, vector dot product, vector cross product
-   []point printing
+   [-]point printing
    []line printing
    []triangle printing
    []circle
    []distance functions
       []1-dimensional color using character fill percentage as color metric
       []color character map
-      []interpolation
-      []clamping
+      []distance function interpolation
+      []distance function clamping
       []point distance
       []circle distance
       []line distance
       []heart distance
+
+[]basic particle system
+   []initial velocity, +- random range
+   []constant acceleration
+   []particle age, +- random range, incremented, culled when old
+   []array or vector, new particles reuse old inactive ones
+   []random characters, sizes increase or decrease
+   []particles are points or meshes
 
 []rewrite silly template restrictions as concepts
 

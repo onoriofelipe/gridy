@@ -22,6 +22,8 @@ public:
       buffer[H*(W+1)-1] = '.';
       buffer[H*(W+1)] = '\0';
    }
+   static uint64_t H{H};
+   static uint64_t W{W};
    uint32_t cursor_line{H};
    std::array<uchar, H * (W + 1) + 1> buffer;
    ///[]TODO: rewrite api using ranges/view syntax
