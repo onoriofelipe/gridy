@@ -1,7 +1,7 @@
 #ifndef __NORMAL_SCREEN_H__
 #define __NORMAL_SCREEN_H__
 
-#include "include/AsciiScreen.h"
+#include "./AsciiScreen.h"
 #include <algorithm> // std::clamp
 
 using uchar = unsigned char;
@@ -13,12 +13,26 @@ uint32_t interpolate(float x, uint32_t MAX){
    return ( x + 1.0f ) / (1.0f - (-1.0f)) * MAX;
 }
 
+/**
+ * NormalizedScreen represents a screen with horizontal and vertical coordinates
+ * from -1.0f to +1.0f. It uses another device for printing, initially only an
+ * AsciiScreen.
+ */
 class NormalScreen {
 public:
-   void draw_point(const Point3D& p){
-      m_ascii_screen.pixel_ref(  interpolate(p.x, m_ascii_screen::W),
-                                 interpolate(p.y, m_ascii_screen::H)  )
+   void draw_point(const Point3& p){
+      ///[]TODO: multiply by world matrix
+      ///[]TODO: multiply by camera matrix
+      ///[]TODO: multiply by projection matrix
+      ///[]TODO: draw only after proper transformations
+      m_ascii_screen.pixel_ref(  interpolate(p.x, decltype(m_ascii_screen)::Wi),
+                                 interpolate(p.y, decltype(m_ascii_screen)::He)  )
                               = default_character ;
+   }
+   void draw(){
+      m_ascii_screen.clear_screen();
+      m_ascii_screen.write_borders();
+      m_ascii_screen.stdout_print();
    }
    uchar default_character{'&'};
    AsciiScreen<50, 100> m_ascii_screen;

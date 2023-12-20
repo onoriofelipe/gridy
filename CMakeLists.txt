@@ -12,7 +12,7 @@ enable_testing()
 
 add_executable(gridy)
 target_include_directories(gridy PUBLIC include)
-target_sources(gridy PUBLIC ./main.cpp include/Matrix.h include/AsciiScreen.h)
+target_sources(gridy PUBLIC ./main.cpp include/Matrix.h include/AsciiScreen.h include/NormalScreen.h include/Misc.h)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

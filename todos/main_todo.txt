@@ -5,13 +5,18 @@
 
 []screen with normalized device coordinates that prints to another device (the existing ascii screen)
    [x]interpolation from normalized coordinates to specific device coordinates
-   []projection matrix
+      []reverse y coordinate
+   []projection matrices
+      []world matrix
+      []camera matrix
+      []projection matrix
       [-]matrix operations
          [+]addition, scalar multiplication, vector multiplication
       [-]vector operations
          [-]addition, subtraction, normal, scalar product, vector dot product, vector cross product
-   [-]point printing
+   [+]point printing
    []line printing
+      []line rasterization
    []triangle printing
    []circle
    []distance functions

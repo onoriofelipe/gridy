@@ -6,26 +6,40 @@
 #include <cstdint>
 #include <cmath>
 
+using uchar = unsigned char;
+
+class Vector3;
+
+namespace m {
+
+float abs(const Vector3& a);
+Vector3 dot(const Vector3& a, const Vector3& b);
+Vector3 cross(const Vector3& a, const Vector3& b);
+Vector3 normal(const Vector3& v);
+
+} // end namespace m
+
 class Vector2{};
 class Vector3{
 public:
    float x{0.0f};
    float y{0.0f};
    float z{0.0f};
+   ///[]TODO: do cached length
    Vector3 dot(const Vector3 b) const{
-      return dot(*this, b);
+      return m::dot(*this, b);
    }
    Vector3 normal() const{
-      return normal(*this);
+      return m::normal(*this);
    }
 
    float operator()(uint32_t i) const {
       switch(i){
-         case 0;
+         case 0:
             return x;
-         case 1;
+         case 1:
             return y;
-         case 2;
+         case 2:
             return z;
          default:
             return x;
@@ -33,11 +47,41 @@ public:
    }
    float& operator[](uint32_t i) {
       switch(i){
-         case 0;
+         case 0:
             return x;
-         case 1;
+         case 1:
             return y;
-         case 2;
+         case 2:
+            return z;
+         default:
+            return x;
+      }
+   }
+};
+class Point3{
+public:
+   float x{0.0f};
+   float y{0.0f};
+   float z{0.0f};
+   float operator()(uint32_t i) const {
+      switch(i){
+         case 0:
+            return x;
+         case 1:
+            return y;
+         case 2:
+            return z;
+         default:
+            return x;
+      }
+   }
+   float& operator[](uint32_t i) {
+      switch(i){
+         case 0:
+            return x;
+         case 1:
+            return y;
+         case 2:
             return z;
          default:
             return x;
@@ -72,35 +116,40 @@ Vector3 operator+(const Vector3& a, const Vector3& b){
 Vector3 operator-(const Vector3& a, const Vector3& b){
    return Vector3{a.x - b.x, a.y - b.y, a.z - b.z};
 }
-Vector3 dot(const Vector3& a, const Vector3& b){
+float m::abs(const Vector3& a){
+   auto dotted = dot(a,a);
+   return std::sqrt(dotted.x + dotted.y + dotted.z);
+}
+Vector3 m::dot(const Vector3& a, const Vector3& b){
    return Vector3{a.x * b.x, a.y * b.y, a.z * b.z};
 }
-Vector3 cross(const Vector3& a, const Vector3& b){
-   return /* can't remember lol */;
+Vector3 m::cross(const Vector3& a, const Vector3& b){
+   // return /* can't remember lol */;
+   return Vector3{};
+}
+Vector3 m::normal(const Vector3& v){
+   auto abs = m::abs(v);
+   return Vector3{v.x / abs, v.y / abs, v.z / abs};
 }
 
-Vector3 operator*(float a, const Vector& b){
+Vector3 operator*(float a, const Vector3& b){
    return Vector3{a * b.x, a * b.y, a * b.z};
 }
-Vector3 operator*(const Vector& b, float a){
+Vector3 operator*(const Vector3& b, float a){
    return a * b;
 }
-Vector3 operator/(const Vector& b, float a){
+Vector3 operator/(const Vector3& b, float a){
    return b * 1.0f/a;
 }
 
 Vector3 operator*(const Matrix3& m, const Vector3 v){
-   auto result = Vector3;
+   auto result = Vector3{};
    for(auto i = 0; i < 3; ++i){
       for(auto j = 0; j < 3; ++j){
          result[i] += m(i, j) * v(j);
       }
    }
-   return
-}
-Vector3 normal(const Vector3& v){
-   auto abs = float{std::sqrt(dot(v,v))};
-   return Vector3{v.x / abs, v.y / abs, v.z / abs};
+   return result;
 }
 
 // Matrix3 operator?
@@ -116,7 +165,7 @@ std::ostream& operator<<(std::ostream& os, const Matrix3& m){
       ++line_counter;
       line_counter %= 3;
    }
-   OS << '\n';
+   os << '\n';
    return os;
 }
 std::ostream& operator<<(std::ostream& os, const Vector3& v){
