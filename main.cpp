@@ -25,7 +25,7 @@ void test_normal_screen(){
    auto l7 = Line{{0.0f, 0.0f, 0.5f}, {0.5f, 0.4f, 0.5f}};
    auto l8 = Line{{0.0f, 0.0f, 0.5f}, {0.5f, -0.4f, 0.5f}};
    auto l9 = Line{{0.0f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.5f}};
-   auto screen = NormalScreen<30, 30>{};
+   auto screen = NormalScreen<30, 60>{};
    screen.debug = false;
    screen.draw_point(p);
    // screen.draw_line(l);

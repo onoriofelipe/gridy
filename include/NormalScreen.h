@@ -46,9 +46,9 @@ public:
 	//     else
 	//        p += 2dy - 2dx
 	//        ++y
-	//if(l.p0.x > l.p1.x){
-	//   std::swap(l.p0, l.p1);
-	//}
+	if(l.p0.x > l.p1.x){
+	  (l.p0, l.p1);
+	}
 	int64_t x1 = interpolate(l.p0.x, decltype(m_ascii_screen)::Wi);
 	int64_t x2 = interpolate(l.p1.x, decltype(m_ascii_screen)::Wi);
 	int64_t y1 = interpolate(l.p0.y, decltype(m_ascii_screen)::He);
