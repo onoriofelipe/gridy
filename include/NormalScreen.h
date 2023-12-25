@@ -46,12 +46,27 @@ public:
 	//     else
 	//        p += 2dy - 2dx
 	//        ++y
+	//if(l.p0.x > l.p1.x){
+	//   std::swap(l.p0, l.p1);
+	//}
 	int64_t x1 = interpolate(l.p0.x, decltype(m_ascii_screen)::Wi);
 	int64_t x2 = interpolate(l.p1.x, decltype(m_ascii_screen)::Wi);
 	int64_t y1 = interpolate(l.p0.y, decltype(m_ascii_screen)::He);
 	int64_t y2 = interpolate(l.p1.y, decltype(m_ascii_screen)::He);
 	int64_t dx = x2 - x1;
 	int64_t dy = y2 - y1;
+	bool dy_negative = ( y1 > y2 );
+	dx = std::abs(dx);
+	dy = std::abs(dy);
+	bool revert{false};
+	if(std::abs(dx) < std::abs(dy)){
+	   revert = true;
+	}
+	if(revert){
+	   std::swap(x1, y1);
+	   std::swap(x2, y2);
+	   std::swap(dx, dy);
+	}
 	if(debug){
 	std::cout << "x1, x2, y1, y2, dx, dy: "
 		  << x1 << " "
@@ -67,15 +82,22 @@ public:
 	int64_t p = 2 * dy - dx;
 	for (auto x = x1; x <= x2; /**/){
 	   if(debug){
-           std::cout << "p before iteration: " << p << std::endl;
-	   } 
-	   draw_directly(x, y);
+           std::cout << "p before iteration: " << p << std::endl;}
+	   if(revert){
+	      draw_directly(y, x);
+	   } else {
+	      draw_directly(x, y);
+	   }
 	   ++x;
 	   if (p < 0){
 	      p += 2 * dy;
 	   } else {
 	      p += 2 * dy - 2 * dx;
-	      ++y;
+	      if( dy_negative ) {
+                 --y;
+	      } else {
+	         ++y;
+	      }
 	   }
 	}
 	if(debug){
