@@ -10,7 +10,7 @@ uint32_t interpolate(float x, uint32_t MAX){
    // sanity
    x = std::clamp(x, -1.0f, 1.0f);
    // in range of -1 to 1, 0.5 will become 75% in range of 0% to 100%
-   return ( x + 1.0f ) / (1.0f - (-1.0f)) * MAX;
+   return ((( x + 1.0f ) + 0.001f ) / (1.0f - (-1.0f))) * (MAX - 1);
 }
 
 /**
@@ -18,6 +18,7 @@ uint32_t interpolate(float x, uint32_t MAX){
  * from -1.0f to +1.0f. It uses another device for printing, initially only an
  * AsciiScreen.
  */
+template <uint64_t H, uint64_t W>
 class NormalScreen {
 public:
    void draw_point(const Point3& p){
@@ -25,17 +26,83 @@ public:
       ///[]TODO: multiply by camera matrix
       ///[]TODO: multiply by projection matrix
       ///[]TODO: draw only after proper transformations
-      m_ascii_screen.pixel_ref(  interpolate(p.x, decltype(m_ascii_screen)::Wi),
-                                 interpolate(p.y, decltype(m_ascii_screen)::He)  )
-                              = default_character ;
+      draw_normalized(p.x, p.y);
+   }
+   void draw_line(const Line& l){
+	// Bresenham
+	// initially treat only case of m < 1
+	// calc dx, dy
+	//      dx = x2 - x1
+	//      dy = y2 - y1
+	// initialize x, y, p
+	//      x = x1
+	//      y = y1
+	//      p = 2dy - dx
+	// loop for x until x2
+	//     print point
+	//     ++x
+	//     if p < 0
+	//        p += 2dy
+	//     else
+	//        p += 2dy - 2dx
+	//        ++y
+	int64_t x1 = interpolate(l.p0.x, decltype(m_ascii_screen)::Wi);
+	int64_t x2 = interpolate(l.p1.x, decltype(m_ascii_screen)::Wi);
+	int64_t y1 = interpolate(l.p0.y, decltype(m_ascii_screen)::He);
+	int64_t y2 = interpolate(l.p1.y, decltype(m_ascii_screen)::He);
+	int64_t dx = x2 - x1;
+	int64_t dy = y2 - y1;
+	if(debug){
+	std::cout << "x1, x2, y1, y2, dx, dy: "
+		  << x1 << " "
+		  << x2 << " "
+		  << y1 << " "
+		  << y2 << " "
+		  << dx << " "
+		  << dy << " "
+		  << std::endl;
+	}
+	// auto x = x1;
+	auto y = y1;
+	int64_t p = 2 * dy - dx;
+	for (auto x = x1; x <= x2; /**/){
+	   if(debug){
+           std::cout << "p before iteration: " << p << std::endl;
+	   } 
+	   draw_directly(x, y);
+	   ++x;
+	   if (p < 0){
+	      p += 2 * dy;
+	   } else {
+	      p += 2 * dy - 2 * dx;
+	      ++y;
+	   }
+	}
+	if(debug){
+	std::cout << "final p: " << p << std::endl;
+	}
+   }
+   void reset_buffer(){
+      m_ascii_screen.reset_buffer();
+   }
+   void draw_normalized(float x, float y){
+      m_ascii_screen.pixel_ref(
+	interpolate(x, decltype(m_ascii_screen)::Wi),
+        interpolate(y, decltype(m_ascii_screen)::He)
+      ) = default_character;
+   }
+   void draw_directly(uint32_t x, uint32_t y){
+      m_ascii_screen.pixel_ref(x, y) = default_character;
    }
    void draw(){
-      m_ascii_screen.clear_screen();
+      // m_ascii_screen.clear_screen();
       m_ascii_screen.write_borders();
       m_ascii_screen.stdout_print();
    }
+   uchar random_ascii_printable(){ return 'x'; }
    uchar default_character{'&'};
-   AsciiScreen<50, 100> m_ascii_screen;
+   AsciiScreen<H, W> m_ascii_screen;
+   bool debug {true};
 };
 
 #endif // __NORMAL_SCREEN_H__

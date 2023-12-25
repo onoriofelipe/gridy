@@ -10,4 +10,6 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 *.exe
-build/**
+build/*
+build_animated/*
+build_back/*

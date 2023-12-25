@@ -28,6 +28,7 @@ public:
    std::array<uchar, H * (W + 1) + 1> buffer;
    ///[]TODO: rewrite api using ranges/view syntax
    uchar& pixel_ref(uint32_t column, uint32_t line){
+      line = H - 1 - line;
       return buffer[line * (W+1) + column ];
    }
    uchar pixel_value(uint32_t column, uint32_t line){
@@ -64,7 +65,10 @@ public:
    void for_pixel(const F& f){
       for(auto j = 0; j < H; ++j){
          for_line(j, f);
-      }
+      } 
+   }
+   void reset_buffer(){
+      for_pixel([](uint32_t, uint32_t){ return '.'; });
    }
    // do operation f for each pixel in line line
    template <typename F>

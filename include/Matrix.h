@@ -88,13 +88,17 @@ public:
       }
    }
 };
+class Line {
+public:
+   //Line(float x0, float y0, float x1, float y1):
+   //	p0{x0, y0, 0.f}, p1{x1, y1, 0.f} {}
+   Line(): p0{0.0f, 0.0f, 0.5f}, p1{0.5f, 0.5f, 0.5f} {}
+   Line(const Point3& p0, const Point3& p1):
+	p0{p0}, p1{p1} {}
+   Point3 p0;
+   Point3 p1;
+};
 // class Point2{};
-// class Point3{
-// public:
-//    float x;
-//    float y;
-//    float z;
-// };
 class Matrix3{
 public:
    std::array<float, 9> buffer;
@@ -124,7 +128,7 @@ Vector3 m::dot(const Vector3& a, const Vector3& b){
    return Vector3{a.x * b.x, a.y * b.y, a.z * b.z};
 }
 Vector3 m::cross(const Vector3& a, const Vector3& b){
-   // return /* can't remember lol */;
+   // return can't remember lol ;
    return Vector3{};
 }
 Vector3 m::normal(const Vector3& v){
