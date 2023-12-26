@@ -122,6 +122,18 @@ void test_big_negative_coefficient(){
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
    }
 }
+void test_big_negative_coefficient_2(){
+   // invisible
+   // auto line5 = Line{{0.0f, 1.0f, 0.5f}, {0.650f, -1.0f, 0.5f}};
+   // visible
+   auto line5 = Line{{0.0f, 1.0f, 0.5f}, {0.651f, -1.0f, 0.5f}};
+   auto screen = NormalScreen<50, 150>{};
+   auto clear_screen = false;
+   screen.debug = true;
+   screen.draw_line(line5);
+   screen.draw(clear_screen);
+   screen.reset_buffer();
+}
 void epilogue(){
    std::cout <<   "Press ENTER to terminate."          << std::endl;
    std::cin.ignore();
@@ -130,6 +142,7 @@ void epilogue(){
 int main(){
    //test_normal_screen();
    // test_animation();
-   test_big_negative_coefficient();
+   // test_big_negative_coefficient();
+   test_big_negative_coefficient_2();
    epilogue();
 }
