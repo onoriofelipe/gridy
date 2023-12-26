@@ -46,13 +46,19 @@ public:
 	//     else
 	//        p += 2dy - 2dx
 	//        ++y
-	if(l.p0.x > l.p1.x){
-	  (l.p0, l.p1);
-	}
-	int64_t x1 = interpolate(l.p0.x, decltype(m_ascii_screen)::Wi);
-	int64_t x2 = interpolate(l.p1.x, decltype(m_ascii_screen)::Wi);
-	int64_t y1 = interpolate(l.p0.y, decltype(m_ascii_screen)::He);
-	int64_t y2 = interpolate(l.p1.y, decltype(m_ascii_screen)::He);
+   Point3 p0;
+   Point3 p1;
+	if(l.p0.x < l.p1.x){
+      p0 = l.p0;
+      p1 = l.p1;
+	} else {
+      p0 = l.p1;
+      p1 = l.p0;
+   }
+	int64_t x1 = interpolate(p0.x, decltype(m_ascii_screen)::Wi);
+	int64_t x2 = interpolate(p1.x, decltype(m_ascii_screen)::Wi);
+	int64_t y1 = interpolate(p0.y, decltype(m_ascii_screen)::He);
+	int64_t y2 = interpolate(p1.y, decltype(m_ascii_screen)::He);
 	int64_t dx = x2 - x1;
 	int64_t dy = y2 - y1;
 	bool dy_negative = ( y1 > y2 );
@@ -69,20 +75,20 @@ public:
 	}
 	if(debug){
 	std::cout << "x1, x2, y1, y2, dx, dy: "
-		  << x1 << " "
-		  << x2 << " "
-		  << y1 << " "
-		  << y2 << " "
-		  << dx << " "
-		  << dy << " "
-		  << std::endl;
+            << x1 << " "
+            << x2 << " "
+            << y1 << " "
+            << y2 << " "
+            << dx << " "
+            << dy << " "
+            << std::endl;
 	}
 	// auto x = x1;
 	auto y = y1;
 	int64_t p = 2 * dy - dx;
 	for (auto x = x1; x <= x2; /**/){
 	   if(debug){
-           std::cout << "p before iteration: " << p << std::endl;}
+         std::cout << "p before iteration: " << p << std::endl;}
 	   if(revert){
 	      draw_directly(y, x);
 	   } else {
@@ -94,7 +100,7 @@ public:
 	   } else {
 	      p += 2 * dy - 2 * dx;
 	      if( dy_negative ) {
-                 --y;
+                  --y;
 	      } else {
 	         ++y;
 	      }
@@ -110,7 +116,7 @@ public:
    void draw_normalized(float x, float y){
       m_ascii_screen.pixel_ref(
 	interpolate(x, decltype(m_ascii_screen)::Wi),
-        interpolate(y, decltype(m_ascii_screen)::He)
+         interpolate(y, decltype(m_ascii_screen)::He)
       ) = default_character;
    }
    void draw_directly(uint32_t x, uint32_t y){

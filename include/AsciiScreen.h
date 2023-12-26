@@ -65,7 +65,7 @@ public:
    void for_pixel(const F& f){
       for(auto j = 0; j < H; ++j){
          for_line(j, f);
-      } 
+      }
    }
    void reset_buffer(){
       for_pixel([](uint32_t, uint32_t){ return '.'; });

@@ -32,55 +32,64 @@ void test_normal_screen(){
    // screen.draw_line(l2);
    // screen.draw_line(l3);
    // screen.draw_line(l4);
-    screen.draw_line(l5);
-    screen.draw();
-    screen.reset_buffer();
-    screen.draw_line(l6);
-    screen.draw();
-    screen.reset_buffer();
-    screen.draw_line(l7);
-    screen.draw();
-    screen.reset_buffer();
-    screen.draw_line(l8);
-    screen.draw();
-    screen.reset_buffer();
-    screen.draw_line(l9);
-    screen.draw();
-    screen.reset_buffer();
+   screen.draw_line(l5);
+   screen.draw();
+   screen.reset_buffer();
+   screen.draw_line(l6);
+   screen.draw();
+   screen.reset_buffer();
+   screen.draw_line(l7);
+   screen.draw();
+   screen.reset_buffer();
+   screen.draw_line(l8);
+   screen.draw();
+   screen.reset_buffer();
+   screen.draw_line(l9);
+   screen.draw();
+   screen.reset_buffer();
 }
 
 void fix_line_x_order(Line& l){
    if (l.p0.x > l.p1.x){
-     ///[]TODO: specialize swap for custom POD
-     // std::swap(l.p0, l.p1);
-     auto temp = l.p0;
-     l.p0 = l.p1;
-     l.p1 = temp;
+      ///[]TODO: specialize swap for custom POD
+      // std::swap(l.p0, l.p1);
+      auto temp = l.p0;
+      l.p0 = l.p1;
+      l.p1 = temp;
    }
 }
 void test_animation(){
    auto line = Line{};
    auto line2 = Line{};
-   line2.p0.x = 0.0f;
-   line2.p0.y = 0.0f;
-   auto screen = NormalScreen<30, 30>{};
+   auto line3 = Line{};
+   // auto screen = NormalScreen<30, 60>{};
+   auto screen = NormalScreen<50, 150>{};
    screen.debug = false;
    auto cycle = 3.14 * 2;
-   auto increment = cycle / 30;
+   auto increment = cycle / 60;
    auto t = cycle;
-   for(auto i = 0; i < 200; ++i){
-      fix_line_x_order(line);
-      fix_line_x_order(line2);
+   for(auto i = 0; i < 400; ++i){
       screen.draw_line(line);
       screen.draw_line(line2);
+      screen.draw_line(line3);
       screen.draw();
       screen.reset_buffer();
+
       line.p0.x = -0.5 + 0.5 * std::cos(t);
       line.p0.y = 0 + 0.5 * std::sin(t);
       line.p1.x = +0.5 + 0.5 * std::cos(-t*0.7);
       line.p1.y = 0 + 0.5 * std::sin(-t*0.7);
+
+      line2.p0.x = 0.0f;
+      line2.p0.y = 0.0f;
       line2.p1.x = std::cos(t);
       line2.p1.y = std::sin(t);
+
+      line3.p0.x = std::cos(t);
+      line3.p0.y = std::sin(t);
+      line3.p1.x = std::cos(t + 3.14);
+      line3.p1.y = std::sin(t + 3.14);
+
       t += increment;
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
    }
