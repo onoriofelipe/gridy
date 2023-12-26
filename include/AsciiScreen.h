@@ -85,8 +85,10 @@ public:
       }
    }
    // print whatever is in the buffer
-   void stdout_print(){
-      clear_screen();
+   void stdout_print(bool clear_screen = true){
+      if(clear_screen){
+         this->clear_screen();
+      }
       const char * const c_string = reinterpret_cast<const char* const>( buffer.data() );
       // std::cout << "\r\x1b[2J\x1b[H" << c_string << std::flush; // inline
       std::cout << c_string << std::flush;

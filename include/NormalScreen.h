@@ -100,7 +100,7 @@ public:
 	   } else {
 	      p += 2 * dy - 2 * dx;
 	      if( dy_negative ) {
-                  --y;
+            --y;
 	      } else {
 	         ++y;
 	      }
@@ -122,10 +122,10 @@ public:
    void draw_directly(uint32_t x, uint32_t y){
       m_ascii_screen.pixel_ref(x, y) = default_character;
    }
-   void draw(){
+   void draw(bool clear_screen = true){
       // m_ascii_screen.clear_screen();
       m_ascii_screen.write_borders();
-      m_ascii_screen.stdout_print();
+      m_ascii_screen.stdout_print(clear_screen);
    }
    uchar random_ascii_printable(){ return 'x'; }
    uchar default_character{'&'};

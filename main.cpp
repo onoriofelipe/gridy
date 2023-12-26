@@ -63,7 +63,7 @@ void test_animation(){
    auto line2 = Line{};
    auto line3 = Line{};
    // auto screen = NormalScreen<30, 60>{};
-   auto screen = NormalScreen<50, 150>{};
+   auto screen = NormalScreen<50, 50>{};
    screen.debug = false;
    auto cycle = 3.14 * 2;
    auto increment = cycle / 60;
@@ -94,6 +94,34 @@ void test_animation(){
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
    }
 }
+void test_big_negative_coefficient(){
+   // auto line = Line{{0.0f, 0.0f, 0.5f}, {1.0f, -1.0f, 0.5f}};
+   auto line0 = Line{{0.0f, 0.0f, 0.5f}, {0.75f, -1.0f, 0.5f}};
+   auto line1 = Line{{0.0f, 0.0f, 0.5f}, {0.65f, -1.0f, 0.5f}};
+   auto line2 = Line{{0.0f, 0.0f, 0.5f}, {0.45f, -1.0f, 0.5f}};
+   auto line3 = Line{{0.0f, 0.0f, 0.5f}, {0.35f, -1.0f, 0.5f}};
+   // auto line4 = Line{{0.0f, 0.0f, 0.5f}, {0.25f, -1.0f, 0.5f}};
+   auto line4 = Line{{-1.0f, 1.0f, 0.5f}, {0.25f, -1.0f, 0.5f}};
+   // auto line5 = Line{{0.0f, 0.0f, 0.5f}, {0.15f, -1.0f, 0.5f}};
+   auto line5 = Line{{-1.0f, 1.0f, 0.5f}, {1.0f, -1.0f, 0.5f}};
+   auto screen = NormalScreen<50, 150>{};
+   auto clear_screen = true;
+   screen.debug = false;
+   // screen.draw_line(line0);
+   // screen.draw_line(line1);
+   // screen.draw_line(line2);
+   // screen.draw_line(line3);
+   for(auto i = 0; i < 600; ++i){
+      // screen.draw_line(line4);
+      screen.draw_line(line5);
+      screen.draw(clear_screen);
+      screen.reset_buffer();
+      // line4.p0.x += 0.05f;
+      line5.p0.x += 0.005f;
+      line5.p1.x -= 0.005f;
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+   }
+}
 void epilogue(){
    std::cout <<   "Press ENTER to terminate."          << std::endl;
    std::cin.ignore();
@@ -101,6 +129,7 @@ void epilogue(){
 
 int main(){
    //test_normal_screen();
-   test_animation();
+   // test_animation();
+   test_big_negative_coefficient();
    epilogue();
 }
