@@ -141,9 +141,9 @@ void epilogue(){
 }
 
 int main(){
-   //test_normal_screen();
+   // test_normal_screen();
    // test_animation();
-   test_big_negative_coefficient();
+   // test_big_negative_coefficient();
    // test_big_negative_coefficient_2();
    epilogue();
 }
