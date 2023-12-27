@@ -1,0 +1,69 @@
+[]add double-buffering to ascii screen
+   []use std::array<std::array> for N buffers, N==2
+   []track current buffer index, update after printing
+   []define how to use multiple threads, one thread just continuously prints at defined frame speed
+
+[]screen with normalized device coordinates that prints to another device (the existing ascii screen)
+   [x]interpolation from normalized coordinates to specific device coordinates
+      []reverse y coordinate
+   []projection matrices
+      []world matrix
+      []camera matrix
+      []projection matrix
+      [-]matrix operations
+         [+]addition, scalar multiplication, vector multiplication
+      [-]vector operations
+         [-]addition, subtraction, normal, scalar product, vector dot product, vector cross product
+   [+]point printing
+   []line printing
+      []line rasterization
+   []triangle printing
+   []circle
+   []distance functions
+      []1-dimensional color using character fill percentage as color metric
+      []color character map
+      []distance function interpolation
+      []distance function clamping
+      []point distance
+      []circle distance
+      []line distance
+      []heart distance
+
+[]basic particle system
+   []initial velocity, +- random range
+   []constant acceleration
+   []particle age, +- random range, incremented, culled when old
+   []array or vector, new particles reuse old inactive ones
+   []random characters, sizes increase or decrease
+   []particles are points or meshes
+
+[]rewrite silly template restrictions as concepts
+
+[]tibia-like rpg mechanics
+[]graph map
+   []tiles
+      []tile properties
+   []implicit connections according to coordinates
+[]moveable player
+   []click-move
+      []A*
+[]stats
+   []health, mana/energy, defense
+[]enemies
+   []basic ones
+   []less basic ones
+   []boss
+   []basic AI, A*
+[]equipment with passive stats and passive abilities
+[]upgradeable skills, exponential experience requirement
+[]autoattacks per turn
+[]action-like mechanics
+   []cooldown abilities
+      []mixed scalings abilities
+         []high base, low O() scaling, low base, high O() scaling
+   []skill tree
+   []multiple playstyles
+[]player buttons
+   []wasd
+   []9 skills, double with modifier alt, 1,2,3,4,5,q,e,r,f
+   []target nearest, modifier + direction to target closest to direction line
