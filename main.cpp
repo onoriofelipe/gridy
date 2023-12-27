@@ -125,8 +125,9 @@ void test_big_negative_coefficient(){
 void test_big_negative_coefficient_2(){
    // invisible
    // auto line5 = Line{{0.0f, 1.0f, 0.5f}, {0.650f, -1.0f, 0.5f}};
+   auto line5 = Line{{0.0f, 1.0f, 0.5f}, {0.2f, -1.0f, 0.5f}};
    // visible
-   auto line5 = Line{{0.0f, 1.0f, 0.5f}, {0.651f, -1.0f, 0.5f}};
+   // auto line5 = Line{{0.0f, 1.0f, 0.5f}, {0.651f, -1.0f, 0.5f}};
    auto screen = NormalScreen<50, 150>{};
    auto clear_screen = false;
    screen.debug = true;
@@ -142,7 +143,7 @@ void epilogue(){
 int main(){
    //test_normal_screen();
    // test_animation();
-   // test_big_negative_coefficient();
-   test_big_negative_coefficient_2();
+   test_big_negative_coefficient();
+   // test_big_negative_coefficient_2();
    epilogue();
 }

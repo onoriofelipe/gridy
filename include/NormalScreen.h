@@ -48,12 +48,14 @@ public:
 	//        ++y
    Point3 p0;
    Point3 p1;
+   bool swapped = false;
 	if(l.p0.x < l.p1.x){
       p0 = l.p0;
       p1 = l.p1;
 	} else {
       p0 = l.p1;
       p1 = l.p0;
+      swapped = true;
    }
 	int64_t x1 = interpolate(p0.x, decltype(m_ascii_screen)::Wi);
 	int64_t x2 = interpolate(p1.x, decltype(m_ascii_screen)::Wi);
@@ -62,17 +64,7 @@ public:
 	int64_t dx = x2 - x1;
 	int64_t dy = y2 - y1;
 	bool dy_negative = ( y1 > y2 );
-	dx = std::abs(dx);
-	dy = std::abs(dy);
-	bool revert{false};
-	if(std::abs(dx) < std::abs(dy)){
-	   revert = true;
-	}
-	if(revert){
-	   std::swap(x1, y1);
-	   std::swap(x2, y2);
-	   std::swap(dx, dy);
-	}
+   // bool y_decreasing = ; //?
 	if(debug){
 	std::cout << "x1, x2, y1, y2, dx, dy: "
             << x1 << " "
@@ -83,28 +75,42 @@ public:
             << dy << " "
             << std::endl;
 	}
-	// auto x = x1;
-	auto y = y1;
-	int64_t p = 2 * dy - dx;
-	for (auto x = x1; x <= x2; /**/){
-	   if(debug){
+	dx = std::abs(dx);
+	dy = std::abs(dy);
+	bool revert{false};
+	if(std::abs(dx) < std::abs(dy)){
+      revert = true;
+   }
+   if(revert){
+      std::swap(x1, y1);
+      std::swap(x2, y2);
+      std::swap(dx, dy);
+   }
+   // auto x = x1;
+   auto y = y1;
+   int64_t p = 2 * dy - dx;
+   auto loop_x1 = std::min(x1,x2);
+   auto loop_x2 = std::max(x1,x2);
+   // for (auto x = x1; x <= x2; /**/){
+   for (auto x = loop_x1; x <= loop_x2; /**/){
+      if(debug){
          std::cout << "p before iteration: " << p << std::endl;}
-	   if(revert){
-	      draw_directly(y, x);
-	   } else {
-	      draw_directly(x, y);
-	   }
-	   ++x;
-	   if (p < 0){
-	      p += 2 * dy;
-	   } else {
-	      p += 2 * dy - 2 * dx;
-	      if( dy_negative ) {
+      if(revert){
+         draw_directly(y, x);
+      } else {
+         draw_directly(x, y);
+      }
+      ++x;
+      if (p < 0){
+         p += 2 * dy;
+      } else {
+         p += 2 * dy - 2 * dx;
+         if( dy_negative ) {
             --y;
-	      } else {
-	         ++y;
-	      }
-	   }
+         } else {
+            ++y;
+         }
+      }
 	}
 	if(debug){
 	std::cout << "final p: " << p << std::endl;
