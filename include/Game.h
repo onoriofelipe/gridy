@@ -3,6 +3,9 @@
 
 #include <map>
 #include <functional>
+#include <limits>
+#include <cstdio>    // std::getchar
+#include <algorithm> // clamp
 
 ///[]TODO: use entities composed of components
 //         (as in entity-component-system organization)
@@ -121,6 +124,46 @@ enum class Action {
    GetAttacked,
 };
 
+class InputHandler {
+public:
+   using action_emitter_t = boost::signals2::signal<void(Action)>;
+   InputHandler(){
+      char_button_map = {
+         {'w', Button::W},
+         {'W', Button::W},
+         {'a', Button::A},
+         {'A', Button::A},
+         {'s', Button::S},
+         {'S', Button::S},
+         {'d', Button::D},
+         {'D', Button::D}
+      };
+      button_action_map = {
+         {Button::W, Action::MoveUp},
+         {Button::A, Action::MoveLeft},
+         {Button::S, Action::MoveDown},
+         {Button::D, Action::MoveRight}
+      };
+   }
+   void handle_inputs(){
+      char character;
+      while ( (character = static_cast<char>(std::getchar()) ) != EOF ){
+         auto char_it = char_button_map.find(character);
+         if (char_it != char_button_map.end()){
+            auto button = char_it->second;
+            auto button_it = button_action_map.find(button);
+            if (button_it != button_action_map.end()){
+               auto action = button_it->second;
+               action_emitter(action);
+            }
+         }
+      }
+   }
+   action_emitter_t action_emitter;
+   std::map<Button, Action> button_action_map{};
+   std::map<char, Button> char_button_map{};
+};
+
 // Listen for input events which are emitted by some loop processor
 ///[]TODO: implement as queue, with processing just with get_event
 ///[]TODO: change generic enum to more generic events that allow payloads,
@@ -178,8 +221,8 @@ public:
       return std::clamp(
          uniform_rand(agressor.attributes.attack)
          - uniform_rand(agressor.attributes.defense),
-         0,
-         std::numeric::MAX_LIMITS<uint32_t>);
+         static_cast<uint32_t>(0),
+         std::numeric_limits<uint32_t>::max());
    }
 
    // for events related to world interaction, such as side-effects of spells
@@ -194,7 +237,7 @@ public:
    Player(  const Position& position,
             const Health& health,
             const Attributes& attributes  ):
-         Thing(position, health, attributes),
+         Thing(position, health, attributes)
          {}
    InputReceptor input_receptor;
    //boost::signals2::signal<?(?)> ? output_emitter;
@@ -203,7 +246,7 @@ public:
 // the real difference to a monster would be probably the AI?
 // so an AI component
 class Monster: public Thing{
-   Player(  const Position& position,
+   Monster(  const Position& position,
             const Health& health,
             const Attributes& attributes  ):
          Thing(position, health, attributes)

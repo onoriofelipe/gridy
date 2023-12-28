@@ -11,6 +11,7 @@
 #include "include/Matrix.h"
 // #include "include/AsciiScreen.h"
 #include "include/NormalScreen.h"
+#include "include/Game.h"
 
 using uchar = unsigned char;
 
@@ -135,15 +136,45 @@ void test_big_negative_coefficient_2(){
    screen.draw(clear_screen);
    screen.reset_buffer();
 }
+void test_game(){
+   bool stop = false;
+   InputHandler input_handler;
+   input_handler.action_emitter.connect([](Action action){
+      switch(action){
+         case Action::MoveUp:
+            std::cout << "MoveUp" << std::endl;
+            break;
+         case Action::MoveDown:
+            std::cout << "MoveDown" << std::endl;
+            break;
+         case Action::MoveLeft:
+            std::cout << "MoveLeft" << std::endl;
+            break;
+         case Action::MoveRight:
+            std::cout << "MoveRight" << std::endl;
+            break;
+         default:
+            break;
+      }
+   });
+   while(!stop){
+      input_handler.handle_inputs();
+      ///[]TODO: do proper time accumulation so no frame skipping occurs
+      std::this_thread::sleep_for(std::chrono::milliseconds(30));
+   }
+}
 void epilogue(){
    std::cout <<   "Press ENTER to terminate."          << std::endl;
    std::cin.ignore();
 }
 
+////next: input handling, ascii only
+//        find reasonable way to stop input buffering and avoid need to do \n in terminal input
 int main(){
    // test_normal_screen();
    // test_animation();
    // test_big_negative_coefficient();
    // test_big_negative_coefficient_2();
+   test_game();
    epilogue();
 }
