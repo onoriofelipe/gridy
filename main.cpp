@@ -7,6 +7,7 @@
 #include <vector>
 #include <thread> // this_thread sleep
 #include <chrono> // milliseconds and seconds
+#include <conio.h> // getch()
 
 #include "include/Matrix.h"
 // #include "include/AsciiScreen.h"
@@ -175,6 +176,9 @@ int main(){
    // test_animation();
    // test_big_negative_coefficient();
    // test_big_negative_coefficient_2();
-   test_game();
+   // test_game();
+   std::cout << "testing getch from conio" << std::endl;
+   auto ch = getch();
+   std::cout << "ch = getch(): " << ch; 
    epilogue();
 }
