@@ -114,3 +114,23 @@ endif()
    Esc[0J	Clear screen from cursor down	ED0
    Esc[1J	Clear screen from cursor up	ED1
    Esc[2J	Clear entire screen	ED2
+
+[]linking curses, assuming already installed with some package manager (see pacman -Ss above for example with boost)
+   https://stackoverflow.com/questions/26693381/cmake-does-not-link-ncurses
+   cmake_minimum_required(VERSION 2.8) project(main)
+   find_package(Curses REQUIRED)
+   include_directories(${CURSES_INCLUDE_DIR})
+   add_executable(main main.cpp)
+   target_link_libraries(main ${CURSES_LIBRARIES})
+
+   pacman -S mingw64/mingw-w64-x86_64-ncurses
+   ^mingw-w64 env ncurses?
+   didn't work
+
+   set(CURSES_LIBRARY "/path/to/libncurses.so") and then set(CURSES_INCLUDE_PATH "/path/to/libcurl/include")
+
+   export TERM=xterm
+   export TERMINFO=<path_to_ncurse_build>/share/terminfo
+   export TERMINFO=C:/msys64/ucrt64/share/terminfo
+   C:/msys64/ucrt64/share/terminfo
+   ./my_program.exe

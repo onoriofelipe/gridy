@@ -7,7 +7,8 @@
 #include <vector>
 #include <thread> // this_thread sleep
 #include <chrono> // milliseconds and seconds
-#include <conio.h> // getch()
+// #include <conio.h> // getch()
+#include <ncurses/ncurses.h> // getch()
 
 #include "include/Matrix.h"
 // #include "include/AsciiScreen.h"
@@ -165,20 +166,41 @@ void test_game(){
    }
 }
 void epilogue(){
+   // char a;
    std::cout <<   "Press ENTER to terminate."          << std::endl;
    std::cin.ignore();
+   // std::cin >> a;
 }
 
 ////next: input handling, ascii only
 //        find reasonable way to stop input buffering and avoid need to do \n in terminal input
+//        []tl;dr: non-buffered input is not easy to do without low-level apis
+//        [x]apparently (n)curses is the only reasonable platform-agnostic method,
+//           others would be sdl, sfml, allegro, or platform-dependent methods
+//           [x]sadly, ncurses destroys my text framebuffer, I will have to surrender to using their
+//              framework for everything even if I wanted only getch()
+//              https://stackoverflow.com/questions/58490734/is-it-possible-to-use-curses-only-to-read-a-keypress-but-nothing-else
+//              "if I put some print statement before, then getkey will clear the screen,
+//              no matter if I call filter or not. I do believe that it works, because thats also what
+//              I understand from the documentation, just not for me :(. I am now considering to either
+//               get my key without curses or switch to using curses for all io"
+//                ^ same
+//           []TODO: check which system-specific apis ncurses uses
 int main(){
    // test_normal_screen();
    // test_animation();
    // test_big_negative_coefficient();
    // test_big_negative_coefficient_2();
    // test_game();
-   std::cout << "testing getch from conio" << std::endl;
+   // std::cout << "testing getch from conio" << std::endl;
+   // auto ch = getch();
+   // std::cout << "testing getch from ncurses" << std::endl;
+   initscr();			/* Start curses mode 		*/
+   cbreak();
+   noecho();
    auto ch = getch();
-   std::cout << "ch = getch(): " << ch; 
-   epilogue();
+   std::cout << "ch = getch(): " << ch;
+   // epilogue();
+   endwin();
+   std::cout << "zzzzzz" << std::endl;
 }
