@@ -185,7 +185,10 @@ void epilogue(){
 //              I understand from the documentation, just not for me :(. I am now considering to either
 //               get my key without curses or switch to using curses for all io"
 //                ^ same
+//           [dead]alternative: https://forums.justlinux.com/showthread.php?135548-SOLVED-Unbuffered-input-without-ncurses
+//           [dead]alternative: http://www.justlinux.com/forum/showthread.php?s=&threadid=45316
 //           []TODO: check which system-specific apis ncurses uses
+//           []last try: https://man7.org/linux/man-pages/man3/termios.3.html
 int main(){
    // test_normal_screen();
    // test_animation();
