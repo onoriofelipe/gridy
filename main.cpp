@@ -165,6 +165,10 @@ void test_game(){
       std::this_thread::sleep_for(std::chrono::milliseconds(30));
    }
 }
+void test_termios_attributes(){
+   
+}
+
 void epilogue(){
    // char a;
    std::cout <<   "Press ENTER to terminate."          << std::endl;
@@ -189,6 +193,32 @@ void epilogue(){
 //           [dead]alternative: http://www.justlinux.com/forum/showthread.php?s=&threadid=45316
 //           []TODO: check which system-specific apis ncurses uses
 //           []last try: https://man7.org/linux/man-pages/man3/termios.3.html
+//                in non-canonical mode, the equivalent to getch:
+//                MIN > 0, TIME == 0 (blocking read)
+//                    read(2) blocks until MIN bytes are available, and returns
+//                    up to the number of bytes requested.
+//               example "raw" mode:
+//               cfmakeraw() sets the terminal to something like the "raw" mode of
+//               the old Version 7 terminal driver: input is available character
+//               by character, echoing is disabled, and all special processing of
+//               terminal input and output characters is disabled.  The terminal
+//               attributes are set as follows:
+//                   termios_p->c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
+//                                   | INLCR | IGNCR | ICRNL | IXON);
+//                   termios_p->c_oflag &= ~OPOST;
+//                   termios_p->c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
+//                   termios_p->c_cflag &= ~(CSIZE | PARENB);
+//                   termios_p->c_cflag |= CS8;
+// struct termios {
+//   tcflag_t c_iflag;    /* input specific flags (bitmask) */
+//   tcflag_t c_oflag;    /* output specific flags (bitmask) */
+//   tcflag_t c_cflag;    /* control flags (bitmask) */
+//   tcflag_t c_lflag;    /* local flags (bitmask) */
+//   cc_t     c_cc[NCCS]; /* special characters */
+// https://en.wikibooks.org/wiki/Serial_Programming/termios
+// There are more than 45 different flags that can be set (via tcsetattr()) or got (via tcgetattr()) with the help of the struct termios. The large number of flags, and their sometimes esoteric and pathologic meaning and behavior, is one of the reasons why serial programming under Unix can be hard. In the device configuration, one must be careful not to make a mistake.
+// ^good examples in the link
+// };
 int main(){
    // test_normal_screen();
    // test_animation();
