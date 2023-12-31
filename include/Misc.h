@@ -1,7 +1,7 @@
 #ifndef __MISC_H__
 #define __MISC_H__
 
-#include "include/AsciiScreen.h"
+#include "./AsciiScreen.h"
 #include <algorithm> // std::clamp
 #include <iostream>
 

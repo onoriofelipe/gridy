@@ -6,6 +6,10 @@
 #include <limits>
 #include <cstdio>    // std::getchar
 #include <algorithm> // clamp
+#include "Utils.h"
+#include "Enums.h"
+
+class Thing;
 
 ///[]TODO: use entities composed of components
 //         (as in entity-component-system organization)
@@ -51,83 +55,12 @@ struct Attributes{
    // uint32_t crit_damage;
 };
 
-class Thing {
-public:
-   Thing(   const Position& position,
-            const Health& health,
-            const Attributes& attributes ):
-            position{position},
-            health{health},
-            attributes{attributes},
-            id{ID::generate_id()}
-            {}
-   Position position;
-   Health health;
-   Attributes attributes;
-   ID id;
-};
-
-enum class Button {
-   Up,
-   Down,
-   Left,
-   Right,
-   W,
-   A,
-   S,
-   D,
-   Q,
-   E,
-   F,
-   R,
-   G,
-   T,
-   C,
-   V,
-   Tab,
-   Caps,
-   _1,
-   _2,
-   _3,
-   _4,
-   _5,
-};
-
-enum class Action {
-   MoveUp,
-   MoveDown,
-   MoveLeft,
-   MoveRight,
-   ToggleTargetting,
-   NextTarget,
-   PreviousTarget,
-   TargetUp,
-   TargetDown,
-   TargetLeft,
-   TargetRight,
-   InteractHere,
-   InteractWithTarget,
-   NextDialogue,
-   DialogueChoiceUp,
-   DialogueChoiceDown,
-   ToggleAutoattack,
-   UseHotkey_0, // A, B, C, D
-   UseHotkey_1,
-   UseHotkey_2,
-   UseHotkey_3,
-   UseHotkey_4,
-   UseHotkey_5,
-   UseHotkey_6,
-   UseHotkey_7,
-   UseHotkey_8,
-   UseHotkey_9,
-   GetAttacked,
-};
-
-class InputHandler {
+// ExternalInputHandler maps keyboard presses in the terminal to actions;
+// later it will map more inputs (mouse, gamepad, touch screen) to actions
+class ExternalInputHandler {
 public:
    using action_emitter_t = boost::signals2::signal<void(Action)>;
-   InputHandler(){
+   ExternalInputHandler(){
       char_button_map = {
          {'w', Button::W},
          {'W', Button::W},
@@ -136,43 +69,77 @@ public:
          {'s', Button::S},
          {'S', Button::S},
          {'d', Button::D},
-         {'D', Button::D}
+         {'D', Button::D},
+         {'\x1B', Button::Esc},
       };
       button_action_map = {
          {Button::W, Action::MoveUp},
          {Button::A, Action::MoveLeft},
          {Button::S, Action::MoveDown},
-         {Button::D, Action::MoveRight}
+         {Button::D, Action::MoveRight},
+         {Button::Esc, Action::Quit},
       };
+      ///[]TODO: complete this using the linked documentation
+      scancode_ascii_map = {
+         {119, 'w'},
+         {97, 'a'},
+         {100, 'd'},
+         {115, 's'},
+         {27, '\x1B'}, // esc key
+         {0, '\0'} // metacode for quitting the input loop
+      };
+   }
+   // [x]not really a scancode, but leave the abstraction later for arrows?
+   char map_scancode_to_ascii(int scancode){
+      char ascii{'\0'};
+      auto ascii_it = scancode_ascii_map.find(scancode);
+      if (ascii_it != scancode_ascii_map.end()){
+         ascii = ascii_it->second;
+      } else if (scancode == 0){
+         // std::cout << "scancode == 0 and ascii_it == map.end()" << std::endl;
+      } else {
+         // std::cout << "scancode != 0 and ascii_it == map.end()" << std::endl;
+         std::cout << "ascii not found: <scancode, ascii>: <" << scancode << ", " <<  static_cast<int>(ascii) << ">" << std::endl;
+      }
+      // std::cout << "mapping <scancode, ascii>: <" << scancode << ", " <<  static_cast<int>(ascii) << ">" << std::endl;
+      return ascii;
    }
    void handle_inputs(){
       char character;
-      while ( (character = static_cast<char>(std::getchar()) ) != EOF ){
+      ///[]TODO: leave input pipeline as int instead of char if input mappings
+      //         are incorrectly mapped
+      while ( (character = map_scancode_to_ascii(gm::getch()) ) != '\0' ){
          auto char_it = char_button_map.find(character);
          if (char_it != char_button_map.end()){
             auto button = char_it->second;
+            // std::cout << "button found: " << button << std::endl;
             auto button_it = button_action_map.find(button);
             if (button_it != button_action_map.end()){
                auto action = button_it->second;
+               // std::cout << "action found: " << action << std::endl;
                action_emitter(action);
             }
          }
       }
+      // std::cout << "finished while in handle_inputs()" << std::endl;
    }
    action_emitter_t action_emitter;
    std::map<Button, Action> button_action_map{};
    std::map<char, Button> char_button_map{};
+   std::map<int, char> scancode_ascii_map{};
 };
 
 // Listen for input events which are emitted by some loop processor
 ///[]TODO: implement as queue, with processing just with get_event
 ///[]TODO: change generic enum to more generic events that allow payloads,
 //         such as complex combat events?
-class InputReceptor {
+class ActionHandler {
 public:
    template <typename F>
    void register_action_handler(Action action, F&& handler){
-      action_map[action] = std::forward(handler);
+      // action_map[action] = std::forward(handler);
+      // action_map[action] = std::function<void(void)>(std::forward(handler));
+      action_map[action] = std::function<void(void)>(handler);
    }
    void on_action(Action action){
       auto it = action_map.find(action);
@@ -212,6 +179,83 @@ uint32_t uniform_rand(uint32_t basic){
    return 1*basic; // mt() * basic;
 }
 
+
+
+
+class Thing {
+public:
+   Thing(   const Position& position,
+            const Health& health,
+            const Attributes& attributes ):
+            position{position},
+            health{health},
+            attributes{attributes},
+            id{ID::generate_id()}
+            {}
+   Position position;
+   Health health;
+   Attributes attributes;
+   ID id;
+   ActionHandler action_handler;
+};
+
+// so wrong to inherit from Thing 🥲
+// GameContext should handle all meta-things related to the game itself
+class GameContext {
+public:
+   GameContext(){
+      action_handler.register_action_handler(Action::Quit, [this](){
+         should_stop_loop = true;
+      });
+   }
+   bool should_stop_loop{false};
+   ActionHandler action_handler;
+};
+
+class Player: public Thing{
+public:
+   Player(  const Position& position,
+            const Health& health,
+            const Attributes& attributes  ):
+         Thing(position, health, attributes)
+   {
+      action_handler.register_action_handler(Action::MoveUp, [this](){
+         this->position.y += 1;
+      });
+      action_handler.register_action_handler(Action::MoveLeft, [this](){
+         this->position.x -= 1;
+      });
+      action_handler.register_action_handler(Action::MoveDown, [this](){
+         this->position.y -= 1;
+      });
+      action_handler.register_action_handler(Action::MoveRight, [this](){
+         this->position.x += 1;
+      });
+   }
+   void draw();
+   //boost::signals2::signal<?(?)> ? output_emitter;
+};
+
+Player create_default_player(){
+   Player player{Position{},
+                 Health{},
+                 Attributes{}};
+   player.position.x = 10;
+   player.position.y = 10;
+   return player;
+}
+// the real difference to a monster would be probably the AI?
+// so an AI component
+class Monster: public Thing{
+   Monster(  const Position& position,
+            const Health& health,
+            const Attributes& attributes  ):
+         Thing(position, health, attributes)
+         {}
+   ActionHandler action_handler;
+   //boost::signals2::signal<?(?)> ? output_emitter;
+};
+
 // centralizes damage formulas and possibly other combat side-effects?
 class CombatMechanics {
 public:
@@ -229,29 +273,6 @@ public:
    // like destroying terrain, and maybe reducing health of entities; these are
    // orders, always obeyed; thus every entity listens to combat mechanics,
    // graphmap included as well
-   //boost::signals2::signal<?(?)> ? output_emitter;
-};
-
-class Player: public Thing{
-public:
-   Player(  const Position& position,
-            const Health& health,
-            const Attributes& attributes  ):
-         Thing(position, health, attributes)
-         {}
-   InputReceptor input_receptor;
-   //boost::signals2::signal<?(?)> ? output_emitter;
-};
-
-// the real difference to a monster would be probably the AI?
-// so an AI component
-class Monster: public Thing{
-   Monster(  const Position& position,
-            const Health& health,
-            const Attributes& attributes  ):
-         Thing(position, health, attributes)
-         {}
-   InputReceptor input_receptor;
    //boost::signals2::signal<?(?)> ? output_emitter;
 };
 

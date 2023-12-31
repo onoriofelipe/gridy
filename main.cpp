@@ -7,8 +7,6 @@
 #include <vector>
 #include <thread> // this_thread sleep
 #include <chrono> // milliseconds and seconds
-// #include <conio.h> // getch()
-#include <ncurses/ncurses.h> // getch()
 
 #include "include/Matrix.h"
 // #include "include/AsciiScreen.h"
@@ -138,10 +136,10 @@ void test_big_negative_coefficient_2(){
    screen.draw(clear_screen);
    screen.reset_buffer();
 }
-void test_game(){
+void test_input_handling(){
    bool stop = false;
-   InputHandler input_handler;
-   input_handler.action_emitter.connect([](Action action){
+   ExternalInputHandler input_handler;
+   input_handler.action_emitter.connect([&](Action action){
       switch(action){
          case Action::MoveUp:
             std::cout << "MoveUp" << std::endl;
@@ -155,6 +153,10 @@ void test_game(){
          case Action::MoveRight:
             std::cout << "MoveRight" << std::endl;
             break;
+         case Action::Quit:
+            std::cout << "Quit" << std::endl;
+            stop = true;
+            break;
          default:
             break;
       }
@@ -165,8 +167,39 @@ void test_game(){
       std::this_thread::sleep_for(std::chrono::milliseconds(30));
    }
 }
+void test_player_drawing(){
+   bool stop = false;
+   GameContext game_context{};
+   Player player = create_default_player();
+   ExternalInputHandler input_handler{};
+   // auto screen = NormalScreen<30, 60>{};
+   auto screen = AsciiScreen<30, 60>{};
+   input_handler.action_emitter.connect([&](Action action){
+      player.action_handler.on_action(action);
+   });
+   input_handler.action_emitter.connect([&](Action action){
+      game_context.action_handler.on_action(action);
+   });
+   auto clear_screen = true;
+   while(!game_context.should_stop_loop){
+      input_handler.handle_inputs();
+      screen.reset_buffer();
+      screen.write_borders();
+      screen.pixel_ref(player.position.x, player.position.y) = '@';
+      screen.stdout_print(clear_screen);
+      // screen.draw_point({player.position.x, player.position.y, 0.0f});
+      // screen.reset_buffer();
+      ///[]TODO: do proper time accumulation so no frame skipping occurs
+      std::this_thread::sleep_for(std::chrono::milliseconds(30));
+   }
+}
 void test_termios_attributes(){
-   
+auto ch = getch();
+   std::cout << "ch = getch(): " << ch;
+}
+
+void test_conio_getch(){
+
 }
 
 void epilogue(){
@@ -176,64 +209,15 @@ void epilogue(){
    // std::cin >> a;
 }
 
-////next: input handling, ascii only
-//        find reasonable way to stop input buffering and avoid need to do \n in terminal input
-//        []tl;dr: non-buffered input is not easy to do without low-level apis
-//        [x]apparently (n)curses is the only reasonable platform-agnostic method,
-//           others would be sdl, sfml, allegro, or platform-dependent methods
-//           [x]sadly, ncurses destroys my text framebuffer, I will have to surrender to using their
-//              framework for everything even if I wanted only getch()
-//              https://stackoverflow.com/questions/58490734/is-it-possible-to-use-curses-only-to-read-a-keypress-but-nothing-else
-//              "if I put some print statement before, then getkey will clear the screen,
-//              no matter if I call filter or not. I do believe that it works, because thats also what
-//              I understand from the documentation, just not for me :(. I am now considering to either
-//               get my key without curses or switch to using curses for all io"
-//                ^ same
-//           [dead]alternative: https://forums.justlinux.com/showthread.php?135548-SOLVED-Unbuffered-input-without-ncurses
-//           [dead]alternative: http://www.justlinux.com/forum/showthread.php?s=&threadid=45316
-//           []TODO: check which system-specific apis ncurses uses
-//           []last try: https://man7.org/linux/man-pages/man3/termios.3.html
-//                in non-canonical mode, the equivalent to getch:
-//                MIN > 0, TIME == 0 (blocking read)
-//                    read(2) blocks until MIN bytes are available, and returns
-//                    up to the number of bytes requested.
-//               example "raw" mode:
-//               cfmakeraw() sets the terminal to something like the "raw" mode of
-//               the old Version 7 terminal driver: input is available character
-//               by character, echoing is disabled, and all special processing of
-//               terminal input and output characters is disabled.  The terminal
-//               attributes are set as follows:
-//                   termios_p->c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
-//                                   | INLCR | IGNCR | ICRNL | IXON);
-//                   termios_p->c_oflag &= ~OPOST;
-//                   termios_p->c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
-//                   termios_p->c_cflag &= ~(CSIZE | PARENB);
-//                   termios_p->c_cflag |= CS8;
-// struct termios {
-//   tcflag_t c_iflag;    /* input specific flags (bitmask) */
-//   tcflag_t c_oflag;    /* output specific flags (bitmask) */
-//   tcflag_t c_cflag;    /* control flags (bitmask) */
-//   tcflag_t c_lflag;    /* local flags (bitmask) */
-//   cc_t     c_cc[NCCS]; /* special characters */
-// https://en.wikibooks.org/wiki/Serial_Programming/termios
-// There are more than 45 different flags that can be set (via tcsetattr()) or got (via tcgetattr()) with the help of the struct termios. The large number of flags, and their sometimes esoteric and pathologic meaning and behavior, is one of the reasons why serial programming under Unix can be hard. In the device configuration, one must be careful not to make a mistake.
-// ^good examples in the link
-// };
+// next: refactor player drawing, choose convention for drawing
 int main(){
    // test_normal_screen();
    // test_animation();
    // test_big_negative_coefficient();
    // test_big_negative_coefficient_2();
-   // test_game();
-   // std::cout << "testing getch from conio" << std::endl;
-   // auto ch = getch();
-   // std::cout << "testing getch from ncurses" << std::endl;
-   initscr();			/* Start curses mode 		*/
-   cbreak();
-   noecho();
-   auto ch = getch();
-   std::cout << "ch = getch(): " << ch;
-   // epilogue();
-   endwin();
-   std::cout << "zzzzzz" << std::endl;
+   // test_input_handling();
+   // test_termios_attributes();
+   // test_conio_getch();
+   test_player_drawing();
+   epilogue();
 }
