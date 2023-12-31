@@ -12,15 +12,10 @@
 // for termios approach, example:
 // https://en.wikibooks.org/wiki/Serial_Programming/termios
 
-
-///[]TODO: ifdef windows environment
+#ifdef _WIN32
+///[x]TODO: ifdef windows environment
 //         [x]ok, works
 #include "conio.h"
-
-///[]TODO: ifdef linux environment
-//         []implement set termios attributes
-// #include <termios.h>
-
 namespace gm {
 
 int getch(){
@@ -40,6 +35,34 @@ int getch(){
 }
 
 }; // ; is not needed after namespaces (;
+// #elif __linux__
+#elif linux
+#include <termios.h>
+///[x]TODO: ifdef linux environment
+//         []implement set termios attributes
+namespace gm {
+
+int getch(){
+   int result{0};
+   // if(_kbhit()){
+   //    // std::cout << "_kbhit: true" << std::endl;
+   //    result = _getch_nolock();
+   //    if (result == 0 || result == 0xE0 ){
+   //       // std::cout << "result == 0 || result = 0xE0, getting extra byte" << std::endl;
+   //       result = _getch_nolock();
+   //    }
+   // } else {
+   //    // std::cout << "_kbhit: false" << std::endl;
+   // }
+   // std::cout << "int from _getch: " << result << std::endl;
+   return result;
+}
+
+}; // ; is not needed after namespaces (;
+
+#else
+#error Platform not supported
+#endif
 
 // previous comments for input handling saga:
 //[x]after all considerations, decided path was: conio for windows, termios for linux,

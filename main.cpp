@@ -204,7 +204,7 @@ void test_conio_getch(){
 
 void epilogue(){
    // char a;
-   std::cout <<   "Press ENTER to terminate."          << std::endl;
+   std::cout <<   "\nPress ENTER to terminate."          << std::endl;
    std::cin.ignore();
    // std::cin >> a;
 }
