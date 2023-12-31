@@ -12,6 +12,7 @@
 // #include "include/AsciiScreen.h"
 #include "include/NormalScreen.h"
 #include "include/Game.h"
+#include "include/Utils.h"
 
 using uchar = unsigned char;
 
@@ -194,7 +195,7 @@ void test_player_drawing(){
    }
 }
 void test_termios_attributes(){
-auto ch = getch();
+auto ch = getchar();
    std::cout << "ch = getch(): " << ch;
 }
 

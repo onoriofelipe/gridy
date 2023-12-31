@@ -35,8 +35,7 @@ int getch(){
 }
 
 }; // ; is not needed after namespaces (;
-// #elif __linux__
-#elif linux
+#elif __linux__
 #include <termios.h>
 ///[x]TODO: ifdef linux environment
 //         []implement set termios attributes
