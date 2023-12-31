@@ -216,8 +216,8 @@ int main(){
    // test_big_negative_coefficient();
    // test_big_negative_coefficient_2();
    // test_input_handling();
-   // test_termios_attributes();
+   test_termios_attributes();
    // test_conio_getch();
-   test_player_drawing();
+   // test_player_drawing();
    epilogue();
 }
