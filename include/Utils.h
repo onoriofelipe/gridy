@@ -54,6 +54,7 @@ int getch(){
    //    // std::cout << "_kbhit: false" << std::endl;
    // }
    // std::cout << "int from _getch: " << result << std::endl;
+   result = getchar();
    return result;
 }
 

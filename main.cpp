@@ -203,22 +203,58 @@ void test_conio_getch(){
 
 }
 
+struct termios global_original_termios;
+
+// enables some form of raw mode, customized so it doesn't break the
+// terminal in linux/android/termux
+// reference is:
+// https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
+void setup_termios(){
+   // struct termios old_tio; //new_tio;
+   // tcgetattr(STDIN_FILENO, &old_tio);
+   // old_tio.c_lflag &= ~( ICANON | ECHO );/*& ~ECHOE  );
+   // old_tio.c_lflag &=( ~ECHOE );
+   // tcsetattr(STDIN_FILENO,TCSANOW,&old_tio);
+   // tcsetattr(STDIN_FILENO,TCSADRAIN,&old_tio);
+   // tcsetattr(STDIN_FILENO,TCSAFLUSH,&old_tio);
+   //termios_p->c_lflag &= ICANON;
+   tcgetattr(STDIN_FILENO, &global_original_termios);
+   struct termios raw = global_original_termios;
+   raw.c_iflag &= ~(BRKINT | INPCK | ICRNL | ISTRIP | IXON);
+   // raw.c_oflag &= ~(OPOST); // \n becomes \n\r
+   raw.c_cflag |= (CS8);
+   raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+   raw.c_cc[VMIN] = 0;
+   raw.c_cc[VTIME] = 1;
+   tcsetattr(STDIN_FILENO,TCSANOW,&raw);
+}
+
+void restore_termios(){
+   tcsetattr(STDIN_FILENO,TCSANOW,&global_original_termios);
+}
 void epilogue(){
    // char a;
+#ifdef __linux__
+   restore_termios();
+#endif
    std::cout <<   "\nPress ENTER to terminate."          << std::endl;
    std::cin.ignore();
    // std::cin >> a;
 }
 
+///[]TODO: hide away the ifdefs
 // next: refactor player drawing, choose convention for drawing
 int main(){
+#ifdef __linux__
+   setup_termios();
+#endif
    // test_normal_screen();
    // test_animation();
    // test_big_negative_coefficient();
    // test_big_negative_coefficient_2();
    // test_input_handling();
-   test_termios_attributes();
+   // test_termios_attributes();
    // test_conio_getch();
-   // test_player_drawing();
+   test_player_drawing();
    epilogue();
 }
