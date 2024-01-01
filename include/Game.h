@@ -8,14 +8,43 @@
 #include <algorithm> // clamp
 #include "Utils.h"
 #include "Enums.h"
+#include "AsciiScreen.h"
+#include "ActionHandler.h"
+#include <memory>
 
 class Thing;
 
+// draw(DrawingComponent&, Screen&)
+
 ///[]TODO: use entities composed of components
 //         (as in entity-component-system organization)
-struct Position{
+struct Position {
    uint32_t x;
    uint32_t y;
+};
+struct Representation {
+   char c{'X'};
+   char ascii(){
+      return c;
+   }
+};
+struct DrawingComponent {
+   DrawingComponent(std::shared_ptr<Position>& p,
+		    std::shared_ptr<Representation>& r):
+	p{p}, r{r} {
+      ;
+   }
+   void draw(AsciiScreen* screen){
+      screen->get_pixel(p.x, p.y) = r.ascii();
+   }
+   void draw(const Position& p, const Representation& r){
+      ;
+   }
+   // another approach being tested: some components have requirements,
+   // defined by other components. ideally prepared during construction
+   // but can be redefined during runtime
+   std::shared_ptr<Position> p;
+   std::shared_ptr<Representation> r;
 };
 
 struct Health{
@@ -88,6 +117,9 @@ public:
          {27, '\x1B'}, // esc key
          {0, '\0'} // metacode for quitting the input loop
       };
+      action_handler.register_action_handler(Action::HandleInput, [this](){
+         handle_inputs();
+      });
    }
    // [x]not really a scancode, but leave the abstraction later for arrows?
    char map_scancode_to_ascii(int scancode){
@@ -124,6 +156,7 @@ public:
       // std::cout << "finished while in handle_inputs()" << std::endl;
    }
    action_emitter_t action_emitter;
+   ActionHandler action_handler;
    std::map<Button, Action> button_action_map{};
    std::map<char, Button> char_button_map{};
    std::map<int, char> scancode_ascii_map{};
@@ -186,29 +219,20 @@ class Thing {
 public:
    Thing(   const Position& position,
             const Health& health,
-            const Attributes& attributes ):
+            const Attributes& attributes,
+	    std::shared_ptr<Representation>& r,
+	    std::shared_ptr<DrawingComponent>& ):
             position{position},
+	    representation{r},
             health{health},
             attributes{attributes},
             id{ID::generate_id()}
             {}
-   Position position;
+   std::shared_ptr<Position> position;
+   std::shared_ptr<Representation> representation;
    Health health;
    Attributes attributes;
    ID id;
-   ActionHandler action_handler;
-};
-
-// so wrong to inherit from Thing 🥲
-// GameContext should handle all meta-things related to the game itself
-class GameContext {
-public:
-   GameContext(){
-      action_handler.register_action_handler(Action::Quit, [this](){
-         should_stop_loop = true;
-      });
-   }
-   bool should_stop_loop{false};
    ActionHandler action_handler;
 };
 
@@ -216,8 +240,9 @@ class Player: public Thing{
 public:
    Player(  const Position& position,
             const Health& health,
-            const Attributes& attributes  ):
-         Thing(position, health, attributes)
+            const Attributes& attributes,
+	    std::shared_ptr<Representation>& r):
+         Thing(position, health, attributes, r)
    {
       action_handler.register_action_handler(Action::MoveUp, [this](){
          this->position.y += 1;
@@ -239,7 +264,9 @@ public:
 Player create_default_player(){
    Player player{Position{},
                  Health{},
-                 Attributes{}};
+                 Attributes{},
+                 Representation{}
+                 };
    player.position.x = 10;
    player.position.y = 10;
    return player;
@@ -247,10 +274,11 @@ Player create_default_player(){
 // the real difference to a monster would be probably the AI?
 // so an AI component
 class Monster: public Thing{
-   Monster(  const Position& position,
+   Monster( const Position& position,
             const Health& health,
-            const Attributes& attributes  ):
-         Thing(position, health, attributes)
+            const Attributes& attributes,
+	    std::shared_ptr<Representation>& r):
+         Thing(position, health, attributes, r)
          {}
    ActionHandler action_handler;
    //boost::signals2::signal<?(?)> ? output_emitter;

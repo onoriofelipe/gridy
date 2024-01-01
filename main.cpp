@@ -13,9 +13,10 @@
 #include "include/NormalScreen.h"
 #include "include/Game.h"
 #include "include/Utils.h"
+#include "include/PreviousTests.h"
 
 using uchar = unsigned char;
-
+/*
 void test_normal_screen(){
    auto p = Point3{0.5f, 0.5f, 0.5f};
    auto l = Line{{0.0f, 0.0f,  0.5f}, {1.0f, -1.0f, 0.5f}};
@@ -169,34 +170,76 @@ void test_input_handling(){
    }
 }
 void test_player_drawing(){
-   bool stop = false;
-   GameContext game_context{};
-   Player player = create_default_player();
-   ExternalInputHandler input_handler{};
+   // bool stop = false;
+   // GameContext game_context{};
+   // Player player = create_default_player();
+   // ExternalInputHandler input_handler{};
    // auto screen = NormalScreen<30, 60>{};
-   auto screen = AsciiScreen<30, 60>{};
-   input_handler.action_emitter.connect([&](Action action){
-      player.action_handler.on_action(action);
-   });
-   input_handler.action_emitter.connect([&](Action action){
-      game_context.action_handler.on_action(action);
-   });
-   auto clear_screen = true;
-   while(!game_context.should_stop_loop){
-      input_handler.handle_inputs();
-      screen.reset_buffer();
-      screen.write_borders();
-      screen.pixel_ref(player.position.x, player.position.y) = '@';
-      screen.stdout_print(clear_screen);
-      // screen.draw_point({player.position.x, player.position.y, 0.0f});
+   // auto screen = AsciiScreen<30, 60>{};
+   // input_handler.action_emitter.connect([&](Action action){
+   //    player.action_handler.on_action(action);
+   // });
+   // input_handler.action_emitter.connect([&](Action action){
+   //    game_context.action_handler.on_action(action);
+   // });
+   // auto clear_screen = true;
+   // while(!game_context.should_stop_loop){
+    //   input_handler.handle_inputs();
+     //  screen.reset_buffer();
+    //   screen.write_borders();
+    //   screen.pixel_ref(player.position.x, player.position.y) = '@';
+    //   screen.stdout_print(clear_screen);
+    //   // screen.draw_point({player.position.x, player.position.y, 0.0f});
       // screen.reset_buffer();
       ///[]TODO: do proper time accumulation so no frame skipping occurs
-      std::this_thread::sleep_for(std::chrono::milliseconds(30));
-   }
+    //   std::this_thread::sleep_for(std::chrono::milliseconds(30));
+   // }
 }
+// drawable things should be registerable during runtime since things
+// will be generated during runtime
+// screen will be connected to the same callback
+// draw_emitter.
 void test_termios_attributes(){
 auto ch = getchar();
    std::cout << "ch = getch(): " << ch;
+}
+*/
+void test_connector(){
+   // bool stop = false;
+   GameContext game_context{};
+   ExternalInputHandler input_handler{};
+   auto screen = AsciiScreen<30, 60>{};
+   Connector connector{
+      &game_context,
+      &input_handler,
+      &screen,
+      &player
+   };
+   connector.stablish_connections();
+   gamecontext.do_game_loop();
+   // GameContext game_context{};
+   // Player player = create_default_player();
+   // ExternalInputHandler input_handler{};
+   // auto screen = NormalScreen<30, 60>{};
+   // auto screen = AsciiScreen<30, 60>{};
+   // input_handler.action_emitter.connect([&](Action action){
+   //    player.action_handler.on_action(action);
+   // });
+   // input_handler.action_emitter.connect([&](Action action){
+   //    game_context.action_handler.on_action(action);
+   // });
+   // auto clear_screen = true;
+   // while(!game_context.should_stop_loop){
+    //   input_handler.handle_inputs();
+    //   screen.reset_buffer();
+    //   screen.write_borders();
+    //   screen.pixel_ref(player.position.x, player.position.y) = '@';
+    //   screen.stdout_print(clear_screen);
+      // screen.draw_point({player.position.x, player.position.y, 0.0f});
+      // screen.reset_buffer();
+      ///[]TODO: do proper time accumulation so no frame skipping occurs
+    //   std::this_thread::sleep_for(std::chrono::milliseconds(30));
+   // }
 }
 
 void test_conio_getch(){
@@ -255,6 +298,9 @@ int main(){
    // test_input_handling();
    // test_termios_attributes();
    // test_conio_getch();
-   test_player_drawing();
+   // test_player_drawing();
+   test_connector();
    epilogue();
 }
+
+// 

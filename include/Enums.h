@@ -4,7 +4,7 @@
 #include <iostream>
 #include <map>
 #include <string>
-
+#include <boost/signals2>
 enum class Button {
    Up,
    Down,
@@ -93,7 +93,10 @@ enum class Action {
    UseHotkey_9,
    GetAttacked,
    Quit,
+   HandleInputs,
+   Draw,
 };
+using action_emitter_t = boost::signals2::signal<void(Action action)>;
 
 std::ostream& operator<<(std::ostream& os, const Action& action){
    static std::map<Action, std::string> action_to_string_map {
@@ -126,6 +129,8 @@ std::ostream& operator<<(std::ostream& os, const Action& action){
       {Action::UseHotkey_9,        "UseHotkey_9"},
       {Action::GetAttacked,        "GetAttacked"},
       {Action::Quit,               "Quit"},
+      {Action::HandleInputs,               "HandleInputs"},
+      {Action::Draw,               "Draw"},
    };
    os << action_to_string_map[action];
    return os;

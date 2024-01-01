@@ -36,6 +36,9 @@ target_sources(gridy PUBLIC   ./main.cpp
                               include/Game.h
                               include/Utils.h
                               include/Enums.h
+			      include/Connector.h
+			      include/GameContext.h
+			      include/ActionHandler.h
 )
 # if(NOT CURSES_FOUND)
    # hardcode because findcurses script is broken for msys

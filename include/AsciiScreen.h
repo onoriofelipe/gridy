@@ -1,6 +1,8 @@
 #ifndef __ASCII_SCREEN_H__
 #define __ASCII_SCREEN_H__
 
+#include <boost/signals2.hpp>
+#include "ActionHandler.h"
 using uchar = unsigned char;
 
 /**
@@ -12,7 +14,11 @@ using uchar = unsigned char;
 template <uint64_t H, uint64_t W>
 class AsciiScreen{
 public:
+   using draw_emitter_t = boost::signals2::signal<void(AsciiScreen*)>;
    AsciiScreen(){
+      action_handler.register_action_handler(Action::Draw, [this](){
+         draw();
+      });
       for(auto i = 0; i < H*(W+1); ++i){
          buffer[i] = '~'; // why not '~'
       }
@@ -100,6 +106,18 @@ public:
    void clear_screen(){
       reset_cursor_position();
       std::cout << "\r\x1b[2J";
+   }
+   draw_emitter_t draw_emitter;
+   ActionHandler action_handler;
+   // draw whatever has been connected; their callback is supposed to
+   // know what to do with the screen;
+   ///[]TODO: refactor ascii screen into interface after the needed
+   ///        API is more clear
+   void draw(){
+      reset_buffer();
+      draw_emitter(this);
+      write_borders();
+      stdout_print(bool clearscreen = true);
    }
 };
 
