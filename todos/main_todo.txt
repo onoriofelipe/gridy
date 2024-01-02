@@ -78,3 +78,6 @@
          []AI overridable with specific AI modes
             []turret mode, tank mode, support mode, passive follow mode
             []easy to swap, easy to toggle modes
+[]captureable and trainable monster system, like pokemon
+   []not too much rng-painful breeding
+   []study online pokemmo implemented systems

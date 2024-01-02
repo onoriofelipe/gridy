@@ -14,8 +14,14 @@
 #include "include/Game.h"
 #include "include/Utils.h"
 #include "include/PreviousTests.h"
+#include "include/ExternalInputHandler.h"
+#include "include/GameContext.h"
+#include "include/Connector.h"
 
 using uchar = unsigned char;
+
+///[]TODO: create previous_tests headers and put everything there, refactor
+//         from time to time (unless superseded by new tests)
 /*
 void test_normal_screen(){
    auto p = Point3{0.5f, 0.5f, 0.5f};
@@ -209,6 +215,8 @@ void test_connector(){
    GameContext game_context{};
    ExternalInputHandler input_handler{};
    auto screen = AsciiScreen<30, 60>{};
+   ///[]TODO: create the connector arguments, mostly using make_xxx(), passing
+   //         the raw pointers to connector
    Connector connector{
       &game_context,
       &input_handler,

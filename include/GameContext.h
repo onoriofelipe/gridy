@@ -4,12 +4,12 @@
 #include "Enums.h"
 
  // so wrong to inherit from Thing 🥲
- // GameContext should handle all meta-things related to the game itself    
+ // GameContext should handle all meta-things related to the game itself
 class GameContext {
 public:
    GameContext(){
       action_handler.register_action_handler(Action::Quit, [this](){
-	   stop();
+      stop();
 	});
    }
    bool should_stop_loop{false};
@@ -19,11 +19,11 @@ public:
    void do_game_loop(){
       while(!should_stop_loop){
          action_emitter(Action::HandleInputs);
-	 action_emitter(Action::Draw);
+         action_emitter(Action::Draw);
       }
    }
    ActionHandler action_handler;
    action_emitter_t action_emitter;
- };
+};
 
 #endif // __GAME_CONTEXT_H__

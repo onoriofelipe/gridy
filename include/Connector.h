@@ -6,6 +6,7 @@
 #include "GameContext.h"
 #include "Game.h"
 #include "AsciiScreen.h"
+#include "ExternalInputHandler.h"
 
 // responsiple for creating connections to whoever needs it
 class Connector {
@@ -29,11 +30,13 @@ public:
    void stablish_connections(){
       input_handler->action_emitter.connect([this](Action action){
          player->action_handler.on_action(action);
-      };
+      });
       input_handler->action_emitter.connect([this](Action action){
          game_context->action_handler.on_action(action);
-      };
-
+      });
+      screen->draw_emitter.connect([this](){
+         player->drawing_component->draw(screen.get());
+      }); ///\\\here, checkpoint, next: game loop \/
    }
 
 	// GameContext game_context{};
