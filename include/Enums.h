@@ -4,7 +4,8 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include <boost/signals2>
+#include <boost/signals2.hpp>
+
 enum class Button {
    Up,
    Down,

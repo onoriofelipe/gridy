@@ -16,6 +16,7 @@
 //         are implemented. for now, deal with the troubles related to subtraction with
 //         unsigned integer modular arithmetic
 struct Position {
+   Position(int32_t x, int32_t y): x{x}, y{y} {}
    int32_t x;
    int32_t y;
 };
@@ -28,11 +29,12 @@ struct Representation {
 };
 struct DrawingComponent {
    DrawingComponent(
-      std::shared_ptr<Position>& p,
-      std::shared_ptr<Representation>& r):
+      std::shared_ptr<Position> p,
+      std::shared_ptr<Representation> r):
          p{p}, r{r} {}
-   void draw(AsciiScreen* screen){
-      screen->get_pixel(p->x, p->y) = r->ascii();
+   void draw(Screen* screen){
+      screen->pixel_ref(p->x, p->y) = r->ascii();
+      std::cout << "<c>: <x, y>: " << r->ascii() << ": " << p->x << ", " << p->y << std::endl;
    }
    // another approach being tested: some components have requirements,
    // defined by other components. ideally prepared during construction
@@ -71,10 +73,10 @@ std::shared_ptr<Representation> make_representation(char c){
    auto r = std::make_shared<Representation>(c);
    return r;
 }
-std::shared_ptr<DrawingComponent> make_drawing_component(std::shared_ptr<Position>& p,
-                                                         std::shared_ptr<Representation>& r){
-   auto r = std::make_shared<Representation>(c);
-   return r;
+std::shared_ptr<DrawingComponent> make_drawing_component(std::shared_ptr<Position> p,
+                                                         std::shared_ptr<Representation> r){
+   auto d = std::make_shared<DrawingComponent>(p, r);
+   return d;
 }
 
 #endif // __COMPONENTS_H__

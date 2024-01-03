@@ -7,6 +7,7 @@
 #include <vector>
 #include <thread> // this_thread sleep
 #include <chrono> // milliseconds and seconds
+#include <memory> // std::shared_ptr
 
 #include "include/Matrix.h"
 // #include "include/AsciiScreen.h"
@@ -35,7 +36,8 @@ void test_connector(){
       player.get()
    };
    connector.stablish_connections();
-   gamecontext.do_game_loop();
+   game_context.do_game_loop();
+   connector.close_connections();
    // GameContext game_context{};
    // Player player = create_default_player();
    // ExternalInputHandler input_handler{};
@@ -61,13 +63,15 @@ void test_connector(){
    // }
 }
 
-struct termios global_original_termios;
-
+#ifdef __linux__
+   struct termios global_original_termios;
+#endif
 // enables some form of raw mode, customized so it doesn't break the
 // terminal in linux/android/termux
 // reference is:
 // https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
 void setup_termios(){
+   #ifdef __linux__
    // struct termios old_tio; //new_tio;
    // tcgetattr(STDIN_FILENO, &old_tio);
    // old_tio.c_lflag &= ~( ICANON | ECHO );/*& ~ECHOE  );
@@ -85,6 +89,7 @@ void setup_termios(){
    raw.c_cc[VMIN] = 0;
    raw.c_cc[VTIME] = 1;
    tcsetattr(STDIN_FILENO,TCSANOW,&raw);
+   #endif
 }
 
 ///[]TODO: move setup boilerplate to its own header
@@ -96,7 +101,9 @@ void platform_independent_setup(){
 }
 
 void restore_termios(){
-   tcsetattr(STDIN_FILENO,TCSANOW,&global_original_termios);
+   #ifdef __linux__
+      tcsetattr(STDIN_FILENO,TCSANOW,&global_original_termios);
+   #endif
 }
 
 void epilogue(){
@@ -109,7 +116,7 @@ void epilogue(){
 
 ///[]TODO: [x] hide away the ifdefs
 //         [x] refactor player drawing, choose convention for drawing
-//         [] ?
+//         [] next: find out if extra dynamic casts help the segmentation fault and potential slicing(?) happening
 int main(){
    platform_independent_setup();
    test_connector();

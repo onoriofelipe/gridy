@@ -38,7 +38,7 @@ public:
          {27, '\x1B'}, // esc key
          {0, '\0'} // metacode for quitting the input loop
       };
-      action_handler.register_action_handler(Action::HandleInput, [this](){
+      action_handler.register_action_handler(Action::HandleInputs, [this](){
          handle_inputs();
       });
    }
@@ -69,7 +69,7 @@ public:
             auto button_it = button_action_map.find(button);
             if (button_it != button_action_map.end()){
                auto action = button_it->second;
-               // std::cout << "action found: " << action << std::endl;
+               std::cout << "action found: " << action << std::endl;
                action_emitter(action);
             }
          }

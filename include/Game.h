@@ -32,11 +32,11 @@ public:
 // the eponymous game object, which has been lovingly named Thing here
 class Thing {
 public:
-   Thing(   std::shared_ptr<Position>& p,
-            std::shared_ptr<Representation>& r,
+   Thing(   std::shared_ptr<Position> p,
+            std::shared_ptr<Representation> r,
             const Health& health,
             const Attributes& attributes,
-            std::shared_ptr<DrawingComponent>& d):
+            std::shared_ptr<DrawingComponent> d):
             position{position},
             representation{r},
             health{health},
@@ -48,31 +48,43 @@ public:
    std::shared_ptr<Representation> representation;
    Health health;
    Attributes attributes;
-   ID id;
    std::shared_ptr<DrawingComponent> drawing_component;
+   ID id;
    ActionHandler action_handler;
 };
 
 class Player: public Thing{
 public:
-   Player(  std::shared_ptr<Position>& p,
-            std::shared_ptr<Representation>& r:
+   Player(  std::shared_ptr<Position> p,
+            std::shared_ptr<Representation> r,
             const Health& health,
             const Attributes& attributes,
-            std::shared_ptr<DrawingComponent>& d):
+            std::shared_ptr<DrawingComponent> d):
          Thing(p, r, health, attributes, d)
    {
       action_handler.register_action_handler(Action::MoveUp, [this](){
-         this->position.y += 1;
+         // this->position->y += 1;
+         // this->position->y++;
+         this->position->y = this->position->y + 1;
+         std::cout << "y++" << std::endl;
       });
       action_handler.register_action_handler(Action::MoveLeft, [this](){
-         this->position.x -= 1;
+         // this->position->x -= 1;
+         // this->position->x--;
+         this->position->x = this->position->x - 1;
+         std::cout << "x--" << std::endl;
       });
       action_handler.register_action_handler(Action::MoveDown, [this](){
-         this->position.y -= 1;
+         // this->position->y -= 1;
+         // this->position->y--;
+         this->position->y = this->position->y - 1;
+         std::cout << "y--" << std::endl;
       });
       action_handler.register_action_handler(Action::MoveRight, [this](){
-         this->position.x += 1;
+         // this->position->x += 1;
+         // this->position->x++;
+         this->position->x = this->position->x + 1;
+         std::cout << "x++" << std::endl;
       });
    }
    // void draw(); // remove, another approach chosen
@@ -88,24 +100,24 @@ std::shared_ptr<Player> make_default_player(){
 }
 class Monster: public Thing {
 public:
-   Monster( std::shared_ptr<Position>& p,
-            std::shared_ptr<Representation>& r:
+   Monster( std::shared_ptr<Position> p,
+            std::shared_ptr<Representation> r,
             const Health& health,
             const Attributes& attributes,
-            std::shared_ptr<DrawingComponent>& d):
+            std::shared_ptr<DrawingComponent> d):
          Thing(p, r, health, attributes, d)
    {
       action_handler.register_action_handler(Action::MoveUp, [this](){
-         this->position.y += 1;
+         this->position->y += 1;
       });
       action_handler.register_action_handler(Action::MoveLeft, [this](){
-         this->position.x -= 1;
+         this->position->x -= 1;
       });
       action_handler.register_action_handler(Action::MoveDown, [this](){
-         this->position.y -= 1;
+         this->position->y -= 1;
       });
       action_handler.register_action_handler(Action::MoveRight, [this](){
-         this->position.x += 1;
+         this->position->x += 1;
       });
    }
    void draw();

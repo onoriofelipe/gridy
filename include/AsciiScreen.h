@@ -5,6 +5,23 @@
 #include "ActionHandler.h"
 using uchar = unsigned char;
 
+class Screen;
+
+using draw_emitter_t = boost::signals2::signal<void(Screen*)>;
+
+class Screen {
+public:
+   virtual uchar& pixel_ref(uint32_t column, uint32_t line) = 0;
+   virtual uchar pixel_value(uint32_t column, uint32_t line) = 0;
+   virtual void write_borders(uchar vertical = '|', uchar horizontal = '-', uchar corner = '+') = 0;
+   virtual void reset_buffer() = 0;
+   virtual void stdout_print(bool clear_screen = true) = 0;
+   virtual void draw() = 0;
+
+   draw_emitter_t draw_emitter;
+   ActionHandler action_handler;
+};
+
 /**
  *  AsciiScreen represents a character buffer for manipulation and printing
  *  to a character terminal with height H and width W, plus one extra column
@@ -12,9 +29,8 @@ using uchar = unsigned char;
  */
 // valid for H >= 1, W >= 1
 template <uint64_t H, uint64_t W>
-class AsciiScreen{
+class AsciiScreen: public Screen {
 public:
-   using draw_emitter_t = boost::signals2::signal<void(AsciiScreen*)>;
    AsciiScreen(){
       action_handler.register_action_handler(Action::Draw, [this](){
          draw();
@@ -33,14 +49,14 @@ public:
    uint32_t cursor_line{H};
    std::array<uchar, H * (W + 1) + 1> buffer;
    ///[]TODO: rewrite api using ranges/view syntax
-   uchar& pixel_ref(uint32_t column, uint32_t line){
+   uchar& pixel_ref(uint32_t column, uint32_t line) override {
       line = H - 1 - line;
       return buffer[line * (W+1) + column ];
    }
-   uchar pixel_value(uint32_t column, uint32_t line){
+   uchar pixel_value(uint32_t column, uint32_t line) override {
       return buffer[line * (W+1) + column ];
    }
-   void write_borders(uchar vertical = '|', uchar horizontal = '-', uchar corner = '+'){
+   void write_borders(uchar vertical = '|', uchar horizontal = '-', uchar corner = '+') override {
       write_vertical(0, vertical);
       write_vertical(W-1, vertical);
       write_horizontal(0, horizontal);
@@ -73,7 +89,7 @@ public:
          for_line(j, f);
       }
    }
-   void reset_buffer(){
+   void reset_buffer() override {
       for_pixel([](uint32_t, uint32_t){ return '.'; });
    }
    // do operation f for each pixel in line line
@@ -91,7 +107,7 @@ public:
       }
    }
    // print whatever is in the buffer
-   void stdout_print(bool clear_screen = true){
+   void stdout_print(bool clear_screen = true) override {
       if(clear_screen){
          this->clear_screen();
       }
@@ -107,17 +123,23 @@ public:
       reset_cursor_position();
       std::cout << "\r\x1b[2J";
    }
-   draw_emitter_t draw_emitter;
-   ActionHandler action_handler;
+   void set_clear_screen_mode(bool should_clear){
+      should_clear_screen = should_clear;
+   }
+
+   bool should_clear_screen{true};
    // draw whatever has been connected; their callback is supposed to
    // know what to do with the screen;
    ///[]TODO: refactor ascii screen into interface after the needed
    ///        API is more clear
-   void draw(){
+   void draw() override {
       reset_buffer();
+      std::cout << "before drawing entities" << std::endl;
       draw_emitter(this);
+      std::cout << "after drawing entities" << std::endl;
       write_borders();
-      stdout_print(bool clearscreen = true);
+      stdout_print(should_clear_screen);
+      std::cout << "done drawing" << std::endl;
    }
 };
 
