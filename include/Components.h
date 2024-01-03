@@ -42,7 +42,7 @@ struct DrawingComponent {
    std::shared_ptr<Representation> r;
 };
 
-struct Health{
+struct Health {
    ///[]TODO: add more interesting and nonlinear information, enums
    ///[]TODO: refactor such that entities are composed of body parts with
    //         individual health information
@@ -50,7 +50,7 @@ struct Health{
    uint32_t current;
 };
 
-struct Attributes{
+struct Attributes {
    uint32_t attack;
    uint32_t defense;
    // for now, defense stat applies to non-physical damage as well

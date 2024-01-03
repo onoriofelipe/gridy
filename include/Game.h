@@ -75,18 +75,18 @@ public:
          this->position.x += 1;
       });
    }
-   void draw();
+   // void draw(); // remove, another approach chosen
    //boost::signals2::signal<?(?)> ? output_emitter;
 };
 
-std::shared_ptr<Player> create_default_player(){
+std::shared_ptr<Player> make_default_player(){
    auto pos = make_position(10, 10);
    auto r = make_representation('@');
    auto d = make_drawing_component(pos, r);
    auto p = std::make_shared<Player>(pos, r, Health{}, Attributes{}, d);
    return p;
 }
-class Monster: public Thing{
+class Monster: public Thing {
 public:
    Monster( std::shared_ptr<Position>& p,
             std::shared_ptr<Representation>& r:
@@ -112,7 +112,7 @@ public:
    //boost::signals2::signal<?(?)> ? output_emitter;
 };
 
-std::shared_ptr<Monster> create_default_monster(){
+std::shared_ptr<Monster> make_default_monster(){
    auto pos = make_position(20, 20);
    auto r = make_representation('M');
    auto d = make_drawing_component(pos, r);

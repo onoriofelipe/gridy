@@ -20,10 +20,10 @@ public:
    ExternalInputHandler* input_handler,
    AsciiScreen* screen,
    Player* player):
-	   game_context{game_context},
-	   input_handler{input_handler},
-	   screen{screen},
-	   player{player}
+      game_context{game_context},
+      input_handler{input_handler},
+      screen{screen},
+      player{player}
    {
       // stablish_connections();   // done outside for now
    }
