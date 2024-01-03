@@ -2,6 +2,7 @@
 #define  __GAME_CONTEXT_H__
 
 #include "Enums.h"
+#include "ActionHandler.h"
 #include <thread>
 #include <chrono>
 
@@ -26,7 +27,7 @@ public:
          // std::cout << "inputs handled" << std::endl;
          action_emitter(Action::Draw);
          // std::cout << "things drawn" << std::endl;
-         std::this_thread::sleep_for(std::chrono::milliseconds(300));
+         std::this_thread::sleep_for(std::chrono::milliseconds(30));
       }
    }
    ActionHandler action_handler;

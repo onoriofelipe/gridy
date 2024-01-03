@@ -116,7 +116,8 @@ void epilogue(){
 
 ///[]TODO: [x] hide away the ifdefs
 //         [x] refactor player drawing, choose convention for drawing
-//         [] next: find out if extra dynamic casts help the segmentation fault and potential slicing(?) happening
+//         [x] find out if extra dynamic casts help the segmentation fault and potential slicing(?) happening
+//         [] next: cleanup and fix warnings
 int main(){
    platform_independent_setup();
    test_connector();

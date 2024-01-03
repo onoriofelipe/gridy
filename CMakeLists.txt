@@ -42,6 +42,7 @@ target_sources(gridy PUBLIC   ./main.cpp
                               include/ExternalInputHandler.h
                               include/Components.h
 )
+target_compile_options(gridy PRIVATE -Wall)
 # if(NOT CURSES_FOUND)
    # hardcode because findcurses script is broken for msys
    # set(CURSES_LIBRARIES "C:/msys64/ucrt64/bin/libncursesw6.dll")
