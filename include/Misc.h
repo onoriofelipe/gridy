@@ -8,11 +8,6 @@
 using uchar = unsigned char;
 
 void crude_animation_benchmark(){
-      // boost::signals2::signal<void (int a)> emitter;
-   // auto lambda = [](int x){ std::cout << x << std::endl; };
-   // emitter.connect(lambda);
-   // emitter(23);
-   // emitter(14);
    auto screen = AsciiScreen<50,100>{};
    uchar min {32};
    uchar max {126};

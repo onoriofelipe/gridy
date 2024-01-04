@@ -3,6 +3,7 @@
 
 #include <boost/signals2.hpp>
 #include "ActionHandler.h"
+
 using uchar = unsigned char;
 
 class Screen;
@@ -17,6 +18,7 @@ public:
    virtual void reset_buffer() = 0;
    virtual void stdout_print(bool clear_screen = true) = 0;
    virtual void draw() = 0;
+   virtual void write_errors() = 0;
 
    draw_emitter_t draw_emitter;
    ActionHandler action_handler;
@@ -35,10 +37,10 @@ public:
       action_handler.register_action_handler(Action::Draw, [this](){
          draw();
       });
-      for(auto i = 0; i < H*(W+1); ++i){
+      for(auto i = uint32_t{0}; i < H*(W+1); ++i){
          buffer[i] = '~'; // why not '~'
       }
-      for(auto j = 0; j < H; ++j){
+      for(auto j = uint32_t{0}; j < H; ++j){
          buffer[j*(W+1) + W] = '\n';
       }
       buffer[H*(W+1)-1] = '.';
@@ -65,13 +67,13 @@ public:
    }
    // write a horizontal line of characters
    void write_horizontal(uint32_t line, uchar character){
-      for(auto i = 0; i < W; ++i){
+      for(auto i = uint32_t{0}; i < W; ++i){
          buffer[line * (W+1) + i] = character;
       }
    }
    // write a vertical line of characters
    void write_vertical(uint32_t column, uchar character){
-      for(auto j = 0; j < H; ++j){
+      for(auto j = uint32_t{0}; j < H; ++j){
          buffer[j * (W+1) + column] = character;
       }
    }
@@ -85,7 +87,7 @@ public:
    // do operation f for each pixel
    template <typename F>
    void for_pixel(const F& f){
-      for(auto j = 0; j < H; ++j){
+      for(auto j = uint32_t{0}; j < H; ++j){
          for_line(j, f);
       }
    }
@@ -95,14 +97,14 @@ public:
    // do operation f for each pixel in line line
    template <typename F>
    void for_line(uint32_t line, const F& f){
-      for(auto i = 0; i < W; ++i){
+      for(auto i = uint32_t{0}; i < W; ++i){
          pixel_ref(i, line) = f(i, line);
       }
    }
    // do operation f for each pixel in column column
    template <typename F>
    void for_column(uint32_t column, const F& f){
-      for(auto j = 0; j < H; ++j){
+      for(auto j = uint32_t{0}; j < H; ++j){
          pixel_ref(column, j) = f(column, j);
       }
    }
@@ -134,13 +136,19 @@ public:
    ///        API is more clear
    void draw() override {
       reset_buffer();
-      std::cout << "before drawing entities" << std::endl;
+      // std::cerr << "before drawing entities" << '\n';
       draw_emitter(this);
-      std::cout << "after drawing entities" << std::endl;
+      // std::cerr << "after drawing entities" << '\n';
       write_borders();
       stdout_print(should_clear_screen);
-      std::cout << "done drawing" << std::endl;
+      // std::cerr << "done drawing" << std::endl;
    }
+   ///[]TODO: write to begin of buffer or last few lines of buffer,
+   ///[]TODO: consider some standardized debug display, targetting an entity
+   //         in the game will display it's main data, so each relevant entity
+   //         should be convertible to string, and newlines should be translated
+   //         to a separate write line call, or a write range of lines call
+   virtual void write_errors(){}
 };
 
 #endif // __ASCII_SCREEN_H__

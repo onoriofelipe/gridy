@@ -95,7 +95,6 @@ public:
    int64_t p = 2 * dy - dx;
    auto loop_x1 = std::min(x1,x2);
    auto loop_x2 = std::max(x1,x2);
-   // for (auto x = x1; x <= x2; /**/){
    for (auto x = loop_x1; x <= loop_x2; /**/){
       if(debug){
          std::cout << "p before iteration: " << p << std::endl;}

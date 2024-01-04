@@ -13,8 +13,6 @@ class ActionHandler {
 public:
    template <typename F>
    void register_action_handler(Action action, F&& handler){
-      // action_map[action] = std::forward(handler);
-      // action_map[action] = std::function<void(void)>(std::forward(handler));
       action_map[action] = std::function<void(void)>(handler);
    }
    void on_action(Action action){

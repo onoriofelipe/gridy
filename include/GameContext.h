@@ -27,9 +27,11 @@ public:
          // std::cout << "inputs handled" << std::endl;
          action_emitter(Action::Draw);
          // std::cout << "things drawn" << std::endl;
+         ///[]TODO: do proper time accumulation so no frame skipping occurs
          std::this_thread::sleep_for(std::chrono::milliseconds(30));
       }
    }
+   std::vector<std::shared_ptr<Thing>> things{};
    ActionHandler action_handler;
    action_emitter_t action_emitter;
 };

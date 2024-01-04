@@ -22,7 +22,6 @@
 using uchar = unsigned char;
 
 void test_connector(){
-   // bool stop = false;
    GameContext game_context{};
    ExternalInputHandler input_handler{};
    auto screen = AsciiScreen<30, 60>{};
@@ -38,29 +37,6 @@ void test_connector(){
    connector.stablish_connections();
    game_context.do_game_loop();
    connector.close_connections();
-   // GameContext game_context{};
-   // Player player = create_default_player();
-   // ExternalInputHandler input_handler{};
-   // auto screen = NormalScreen<30, 60>{};
-   // auto screen = AsciiScreen<30, 60>{};
-   // input_handler.action_emitter.connect([&](Action action){
-   //    player.action_handler.on_action(action);
-   // });
-   // input_handler.action_emitter.connect([&](Action action){
-   //    game_context.action_handler.on_action(action);
-   // });
-   // auto clear_screen = true;
-   // while(!game_context.should_stop_loop){
-    //   input_handler.handle_inputs();
-    //   screen.reset_buffer();
-    //   screen.write_borders();
-    //   screen.pixel_ref(player.position.x, player.position.y) = '@';
-    //   screen.stdout_print(clear_screen);
-      // screen.draw_point({player.position.x, player.position.y, 0.0f});
-      // screen.reset_buffer();
-      ///[]TODO: do proper time accumulation so no frame skipping occurs
-    //   std::this_thread::sleep_for(std::chrono::milliseconds(30));
-   // }
 }
 
 #ifdef __linux__
@@ -72,32 +48,27 @@ void test_connector(){
 // https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
 void setup_termios(){
    #ifdef __linux__
-   // struct termios old_tio; //new_tio;
-   // tcgetattr(STDIN_FILENO, &old_tio);
-   // old_tio.c_lflag &= ~( ICANON | ECHO );/*& ~ECHOE  );
-   // old_tio.c_lflag &=( ~ECHOE );
-   // tcsetattr(STDIN_FILENO,TCSANOW,&old_tio);
-   // tcsetattr(STDIN_FILENO,TCSADRAIN,&old_tio);
-   // tcsetattr(STDIN_FILENO,TCSAFLUSH,&old_tio);
-   //termios_p->c_lflag &= ICANON;
    tcgetattr(STDIN_FILENO, &global_original_termios);
    struct termios raw = global_original_termios;
    raw.c_iflag &= ~(BRKINT | INPCK | ICRNL | ISTRIP | IXON);
-   // raw.c_oflag &= ~(OPOST); // \n becomes \n\r
+   // raw.c_oflag &= ~(OPOST); // \n becomes \n\r, undesired currently
    raw.c_cflag |= (CS8);
    raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
    raw.c_cc[VMIN] = 0;
    raw.c_cc[VTIME] = 1;
+   // options: some more buggy than others in android 8.0 to 11.0
+   // TCSANOW TCSADRAIN TCSAFLUSH
    tcsetattr(STDIN_FILENO,TCSANOW,&raw);
    #endif
 }
 
 ///[]TODO: move setup boilerplate to its own header
-
 void platform_independent_setup(){
    #ifdef __linux__
       setup_termios();
    #endif
+   redirect_error_stream_to_file();
+   // redirect_error_stream_to_ascii_screen();
 }
 
 void restore_termios(){
@@ -117,9 +88,18 @@ void epilogue(){
 ///[]TODO: [x] hide away the ifdefs
 //         [x] refactor player drawing, choose convention for drawing
 //         [x] find out if extra dynamic casts help the segmentation fault and potential slicing(?) happening
-//         [] next: cleanup and fix warnings
+//         [x] cleanup and fix warnings
+//         [x] error redirection in log file
+//         [] future: error redirection in ascii screen as described somewhere else
+//         [] future: create debug log class instead of relying on std::cerr
+//         [x] next: 
 int main(){
+   // no elegant method for redirecting streams without running into raii issue yet
+   std::streambuf* original_cerr_stream = std::cerr.rdbuf();
+   std::ofstream error_filestream("logs.txt");
+   std::cerr.rdbuf(error_filestream.rdbuf());
    platform_independent_setup();
    test_connector();
+   std::cerr.rdbuf(original_cerr_stream);
    epilogue();
 }

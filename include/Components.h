@@ -4,8 +4,6 @@
 #include <memory>
 #include "AsciiScreen.h"
 
-// draw(DrawingComponent&, Screen&)
-
 ///[]TODO: use entities composed of components
 //         (as in entity-component-system organization)
 ///[]TODO: refactor asciiscreen in terms of coordinates centered around 0, such that they
@@ -34,7 +32,7 @@ struct DrawingComponent {
          p{p}, r{r} {}
    void draw(Screen* screen){
       screen->pixel_ref(p->x, p->y) = r->ascii();
-      std::cout << "<c>: <x, y>: " << r->ascii() << ": " << p->x << ", " << p->y << std::endl;
+      // std::cerr << "<c>: <x, y>: " << r->ascii() << ": " << p->x << ", " << p->y << std::endl;
    }
    // another approach being tested: some components have requirements,
    // defined by other components. ideally prepared during construction

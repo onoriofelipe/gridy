@@ -43,7 +43,22 @@ public:
             attributes{attributes},
             drawing_component{d},
             id{ID::generate_id()}
-            {}
+   {
+      // for now, initially all things are moveable as long as they receive the order
+      ///[]TODO: watch out for memory explosion or fragmentation
+      action_handler.register_action_handler(Action::MoveUp, [this](){
+         this->position->y += 1;
+      });
+      action_handler.register_action_handler(Action::MoveLeft, [this](){
+         this->position->x -= 1;
+      });
+      action_handler.register_action_handler(Action::MoveDown, [this](){
+         this->position->y -= 1;
+      });
+      action_handler.register_action_handler(Action::MoveRight, [this](){
+         this->position->x += 1;
+      });
+   }
    std::shared_ptr<Position> position;
    std::shared_ptr<Representation> representation;
    Health health;
@@ -61,34 +76,7 @@ public:
             const Attributes& attributes,
             std::shared_ptr<DrawingComponent> d):
          Thing(p, r, health, attributes, d)
-   {
-      action_handler.register_action_handler(Action::MoveUp, [this](){
-         this->position->y += 1;
-         // this->position->y++;
-         // this->position->y = this->position->y + 1;
-         // std::cout << "y++" << std::endl;
-      });
-      action_handler.register_action_handler(Action::MoveLeft, [this](){
-         this->position->x -= 1;
-         // this->position->x--;
-         // this->position->x = this->position->x - 1;
-         // std::cout << "x--" << std::endl;
-      });
-      action_handler.register_action_handler(Action::MoveDown, [this](){
-         this->position->y -= 1;
-         // this->position->y--;
-         // this->position->y = this->position->y - 1;
-         // std::cout << "y--" << std::endl;
-      });
-      action_handler.register_action_handler(Action::MoveRight, [this](){
-         this->position->x += 1;
-         // this->position->x++;
-         // this->position->x = this->position->x + 1;
-         // std::cout << "x++" << std::endl;
-      });
-   }
-   // void draw(); // remove, another approach chosen
-   //boost::signals2::signal<?(?)> ? output_emitter;
+   {}
 };
 
 std::shared_ptr<Player> make_default_player(){
@@ -121,11 +109,12 @@ public:
       });
    }
    void draw();
-   //boost::signals2::signal<?(?)> ? output_emitter;
 };
 
 std::shared_ptr<Monster> make_default_monster(){
-   auto pos = make_position(20, 20);
+   static int32_t offset{0};
+   auto pos = make_position(20, 20 + offset);
+   ++offset;
    auto r = make_representation('M');
    auto d = make_drawing_component(pos, r);
    auto m = std::make_shared<Monster>(pos, r, Health{}, Attributes{}, d);

@@ -49,12 +49,12 @@ public:
       if (ascii_it != scancode_ascii_map.end()){
          ascii = ascii_it->second;
       } else if (scancode == 0){
-         // std::cout << "scancode == 0 and ascii_it == map.end()" << std::endl;
+         // std::cerr << "scancode == 0 and ascii_it == map.end()" << std::endl;
       } else {
-         // std::cout << "scancode != 0 and ascii_it == map.end()" << std::endl;
-         std::cout << "ascii not found: <scancode, ascii>: <" << scancode << ", " <<  static_cast<int>(ascii) << ">" << std::endl;
+         // std::cerr << "scancode != 0 and ascii_it == map.end()" << std::endl;
+         std::cerr << "ascii not found: <scancode, ascii>: <" << scancode << ", " <<  static_cast<int>(ascii) << ">" << std::endl;
       }
-      // std::cout << "mapping <scancode, ascii>: <" << scancode << ", " <<  static_cast<int>(ascii) << ">" << std::endl;
+      // std::cerr << "mapping <scancode, ascii>: <" << scancode << ", " <<  static_cast<int>(ascii) << ">" << std::endl;
       return ascii;
    }
    void handle_inputs(){
@@ -65,16 +65,16 @@ public:
          auto char_it = char_button_map.find(character);
          if (char_it != char_button_map.end()){
             auto button = char_it->second;
-            // std::cout << "button found: " << button << std::endl;
+            // std::cerr << "button found: " << button << std::endl;
             auto button_it = button_action_map.find(button);
             if (button_it != button_action_map.end()){
                auto action = button_it->second;
-               std::cout << "action found: " << action << std::endl;
+               // std::cerr << "action found: " << action << std::endl;
                action_emitter(action);
             }
          }
       }
-      // std::cout << "finished while in handle_inputs()" << std::endl;
+      // std::cerr << "finished while in handle_inputs()" << std::endl;
    }
    action_emitter_t action_emitter;
    ActionHandler action_handler;
