@@ -105,6 +105,7 @@ std::ostream& operator<<(std::ostream& os, const Action& action){
       {Action::MoveDown,           "MoveDown"},
       {Action::MoveLeft,           "MoveLeft"},
       {Action::MoveRight,          "MoveRight"},
+      {Action::MoveRandom,         "MoveRandom"},
       {Action::ToggleTargetting,   "ToggleTargetting"},
       {Action::NextTarget,         "NextTarget"},
       {Action::PreviousTarget,     "PreviousTarget"},

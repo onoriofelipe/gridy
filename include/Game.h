@@ -95,17 +95,8 @@ public:
             std::shared_ptr<DrawingComponent> d):
          Thing(p, r, health, attributes, d)
    {
-      action_handler.register_action_handler(Action::MoveUp, [this](){
+      action_handler.register_action_handler(Action::MoveRandom, [this](){
          this->position->y += 1;
-      });
-      action_handler.register_action_handler(Action::MoveLeft, [this](){
-         this->position->x -= 1;
-      });
-      action_handler.register_action_handler(Action::MoveDown, [this](){
-         this->position->y -= 1;
-      });
-      action_handler.register_action_handler(Action::MoveRight, [this](){
-         this->position->x += 1;
       });
    }
    void draw();

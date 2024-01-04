@@ -17,16 +17,20 @@ public:
    ExternalInputHandler* input_handler{nullptr};
    Screen* screen{nullptr};
    Player* player{nullptr};
+   Player* player{nullptr};
+   EventGenerator* event_generator{nullptr};
    std::vector<boost::signals2::connection> connections{};
 
    Connector(GameContext* game_context,
    ExternalInputHandler* input_handler,
    Screen* screen,
-   Player* player):
+   Player* player,
+   EventGenerator* event_generator):
       game_context{game_context},
       input_handler{input_handler},
       screen{screen},
-      player{player}
+      player{player},
+      event_generator{event_generator}
    {}
    ///[]TODO: consider putting in destructor
    void close_connections(){
@@ -52,6 +56,14 @@ public:
       connections.push_back(screen->draw_emitter.connect([this](Screen* screen_arg){
          player->drawing_component->draw(screen_arg);
       }));
+      for(auto& thing: game_context->things){
+         connections.push_back(game_context->event_generator.connect([this](Action action){
+            thing->action_handler.on_action(action);
+         }));
+         connections.push_back(screen->draw_emitter.connect([this](Screen* screen_arg){
+            thing->drawing_component->draw(screen_arg);
+         }));
+      }
    }
 };
 

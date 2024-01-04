@@ -14,6 +14,7 @@ public:
       action_handler.register_action_handler(Action::Quit, [this](){
       stop();
 	});
+      create_some_things();
    }
    bool should_stop_loop{false};
    void stop(){
@@ -21,15 +22,27 @@ public:
    }
    void do_game_loop(){
       // std::cout << "before game loop" << std::endl;
+      auto some_counter{0};
       while(!should_stop_loop){
          // std::cout << "inside game loop" << std::endl;
          action_emitter(Action::HandleInputs);
          // std::cout << "inputs handled" << std::endl;
          action_emitter(Action::Draw);
          // std::cout << "things drawn" << std::endl;
+         some_counter %= 30;
+         if(some_counter == 0 ){
+            action_emitter(Action::SomeTicks);
+         // event_generator.generate_random_move()
+         }
          ///[]TODO: do proper time accumulation so no frame skipping occurs
          std::this_thread::sleep_for(std::chrono::milliseconds(30));
       }
+   }
+   void create_some_things(){
+      things.push_back(make_default_monster());
+      things.push_back(make_default_monster());
+      things.push_back(make_default_monster());
+      things.push_back(make_default_monster());
    }
    std::vector<std::shared_ptr<Thing>> things{};
    ActionHandler action_handler;
