@@ -66,6 +66,7 @@ public:
    std::shared_ptr<DrawingComponent> drawing_component;
    ID id;
    ActionHandler action_handler;
+   action_emitter_t action_emitter;
 };
 
 class Player: public Thing{
@@ -96,7 +97,9 @@ public:
          Thing(p, r, health, attributes, d)
    {
       action_handler.register_action_handler(Action::MoveRandom, [this](){
-         this->position->y += 1;
+         auto delta_position = action_emitter(Action::RequestRandomNeighbor);
+         p->x += delta_position.x;
+         p->y += delta_position.y;
       });
    }
    void draw();

@@ -33,7 +33,7 @@ target_sources(gridy PUBLIC   ./main.cpp
                               include/AsciiScreen.h
                               include/NormalScreen.h
                               include/Misc.h
-                              include/Game.h
+                              include/Things.h
                               include/Utils.h
                               include/Enums.h
                               include/Connector.h

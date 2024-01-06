@@ -12,7 +12,7 @@
 #include "include/Matrix.h"
 // #include "include/AsciiScreen.h"
 #include "include/NormalScreen.h"
-#include "include/Game.h"
+#include "include/Things.h"
 #include "include/Utils.h"
 #include "include/PreviousTests.h"
 #include "include/ExternalInputHandler.h"

@@ -18,7 +18,7 @@ public:
    template <typename F, typename R>
    void register_action_handler_with_return(Action action, F&& handler){
       static std::map<Action, std::function<R(void)>> action_map_with_return{};
-      action_map[action] = std::function<R(void)>(handler);
+      action_map_with_return[action] = std::function<R(void)>(handler);
    }
    void on_action(Action action){
       auto it = action_map.find(action);
@@ -32,8 +32,9 @@ public:
       auto it = action_map.find(action);
       if(it != action_map.end()){
          // call action callback
-         (it->second)();
+         return (it->second)();
       }
+      return R{};
    }
    std::map<Action, std::function<void(void)>> action_map{};
 };

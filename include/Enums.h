@@ -6,6 +6,23 @@
 #include <string>
 #include <boost/signals2.hpp>
 
+///[]TODO: for the problem of _runtime_ component connection (maybe should be the standard for
+//         all game entities, even static ones at the level of the game):
+//         request connection should be the de-facto standard API for connecting different
+//         components; the providers of services can expect the thing asking for a connection
+//         knows the return and has a component to fulfill the input data requirements... somehow
+enum class ConnectionRequest {
+   ConnectToRandomGenerator,
+};
+
+std::ostream& operator<<(std::ostream& os, const ConnectionRequest& request){
+   static std::map<ConnectionRequest, std::string> request_to_string_map {
+      {ConnectionRequest::ConnectToRandomGenerator,    "ConnectToRandomGenerator"},
+   };
+   os << request_to_string_map[button];
+   return os;
+}
+
 enum class Button {
    Up,
    Down,
@@ -69,6 +86,7 @@ enum class Action {
    MoveDown,
    MoveLeft,
    MoveRight,
+   MoveRandom,
    ToggleTargetting,
    NextTarget,
    PreviousTarget,
@@ -99,6 +117,7 @@ enum class Action {
    RequestRandomNeighbor, // assume 8 neighbors for each cell
    RequestRandomFloat,    // assume range 0.0f - 1.0f
    RequestRandomBool,     // consider using float instead? for different ranges, or also an argument somehow
+   SomeTicks,
 };
 using action_emitter_t = boost::signals2::signal<void(Action action)>;
 
@@ -139,6 +158,7 @@ std::ostream& operator<<(std::ostream& os, const Action& action){
       {Action::RequestRandomNeighbor, "RequestRandomNeighbor"},
       {Action::RequestRandomFloat,    "RequestRandomFloat"},
       {Action::RequestRandomBool,     "RequestRandomBool"},
+      {Action::SomeTicks,             "SomeTicks"},
    };
    os << action_to_string_map[action];
    return os;

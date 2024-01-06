@@ -32,6 +32,8 @@ public:
          some_counter %= 30;
          if(some_counter == 0 ){
             action_emitter(Action::SomeTicks);
+            //\\ another concept: multiple event sources, maybe for different scopes
+            event_generator(Action::MoveRandom);
          // event_generator.generate_random_move()
          }
          ///[]TODO: do proper time accumulation so no frame skipping occurs
@@ -47,6 +49,7 @@ public:
    std::vector<std::shared_ptr<Thing>> things{};
    ActionHandler action_handler;
    action_emitter_t action_emitter;
+   action_emitter_t event_generator;
 };
 
 #endif // __GAME_CONTEXT_H__

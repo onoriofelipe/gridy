@@ -11,6 +11,7 @@ actual priority list of priorities for real
       generator, so actions can be treated as just functions
          []someday find out the performance costs besides the connection overhead that may happen if too many components
             are instantiated in a short period of time
+[]connection request for runtime connections standards
 []add boostbgl-backed graph map
 []try to implement a behavior tree from scratch
    []if it fails research how to do it

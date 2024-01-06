@@ -6,7 +6,7 @@
 #include "Enums.h"
 #include "ActionHandler.h"
 #include "GameContext.h"
-#include "Game.h"
+#include "Things.h"
 #include "AsciiScreen.h"
 #include "ExternalInputHandler.h"
 #include "RandomGenerator.h"
@@ -54,7 +54,7 @@ public:
       auto player = make_default_player();
       auto monster_1 = make_default_monster();
       auto monster_2 = make_default_monster();
-      // Connector connector{
+      // Connector connector {
       //    &game_context,
       //    &input_handler,
       //    &screen,
@@ -79,6 +79,7 @@ public:
       connections.push_back(game_context->action_emitter.connect([this](Action action){
          input_handler->action_handler.on_action(action);
       }));
+      ///[]TODO: for drawing player should be treated like any other thing actually
       connections.push_back(screen->draw_emitter.connect([this](Screen* screen_arg){
          player->drawing_component->draw(screen_arg);
       }));
@@ -86,8 +87,12 @@ public:
          connections.push_back(game_context->event_generator.connect([this](Action action){
             thing->action_handler.on_action(action);
          }));
+         ///[]TODO: interesting point here: there can be multiple calling conventions
          connections.push_back(screen->draw_emitter.connect([this](Screen* screen_arg){
             thing->drawing_component->draw(screen_arg);
+         }));
+         connections.push_back(thing->action_emitter.connect([this](Action action){
+            random_generator->action_handler.on_action_return(action);
          }));
       }
    }
