@@ -77,7 +77,7 @@ public:
       // std::cerr << "finished while in handle_inputs()" << std::endl;
    }
    action_emitter_t action_emitter;
-   ActionHandler action_handler;
+   ActionHandler<void> action_handler;
    std::map<Button, Action> button_action_map{};
    std::map<char, Button> char_button_map{};
    std::map<int, char> scancode_ascii_map{};

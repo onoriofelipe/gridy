@@ -18,14 +18,14 @@ public:
    float_distribution{0, 1},
    int_distribution{-1, 1}
    {
-      action_handler.register_action_handler_with_return(Action::RequestRandomNeighbor, [this](/*std::shared_ptr<Position> p*/) -> Position {
+      action_handler.register_action_handler(Action::RequestRandomNeighbor, [this](/*std::shared_ptr<Position> p*/) -> Position {
          return generate_random_neighbor_delta();
       });
    }
    std::random_device rd;
    std::mt19937 engine;
-   std::uniform_real_distribution<float> float_distribution(0, 1);
-   std::uniform_int_distribution<int32_T> int_distribution(-1, 1);
+   std::uniform_real_distribution<float> float_distribution;
+   std::uniform_int_distribution<int32_t> int_distribution;
 
    // for now, return one of eight neighbors, with coords -1 or 0 or 1 for x and y
    Position generate_random_neighbor_delta(){
@@ -42,8 +42,7 @@ public:
       return Position{x_delta, y_delta};
    }
 
-   distribution(engine);
-   ActionHandler action_handler;
+   ActionHandler<Position> action_handler;
 
    ///[]TODO: neighbor API: should it be defined in terms of absolute position or in terms of deltas?
    //         deltas for now, then it becomes more generic... maybe try both approaches later, but it really

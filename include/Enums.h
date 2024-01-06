@@ -19,7 +19,7 @@ std::ostream& operator<<(std::ostream& os, const ConnectionRequest& request){
    static std::map<ConnectionRequest, std::string> request_to_string_map {
       {ConnectionRequest::ConnectToRandomGenerator,    "ConnectToRandomGenerator"},
    };
-   os << request_to_string_map[button];
+   os << request_to_string_map[request];
    return os;
 }
 

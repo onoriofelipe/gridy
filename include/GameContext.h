@@ -47,7 +47,7 @@ public:
       things.push_back(make_default_monster());
    }
    std::vector<std::shared_ptr<Thing>> things{};
-   ActionHandler action_handler;
+   ActionHandler<void> action_handler;
    action_emitter_t action_emitter;
    action_emitter_t event_generator;
 };

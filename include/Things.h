@@ -13,6 +13,9 @@
 #include "ActionHandler.h"
 #include "Components.h"
 
+// too much coupling for position?
+using action_position_emitter_t = boost::signals2::signal<Position(Action action)>;
+
 ///[]TODO: check if 64 bits is virtually infinite things or ir we need 128 bits
 // ids: this system of identification will be used when one entity needs to
 //      refer to another but they don't know anything about each other;
@@ -65,8 +68,9 @@ public:
    Attributes attributes;
    std::shared_ptr<DrawingComponent> drawing_component;
    ID id;
-   ActionHandler action_handler;
+   ActionHandler<void> action_handler;
    action_emitter_t action_emitter;
+   action_position_emitter_t action_position_emitter;
 };
 
 class Player: public Thing{
@@ -97,9 +101,9 @@ public:
          Thing(p, r, health, attributes, d)
    {
       action_handler.register_action_handler(Action::MoveRandom, [this](){
-         auto delta_position = action_emitter(Action::RequestRandomNeighbor);
-         p->x += delta_position.x;
-         p->y += delta_position.y;
+         auto delta_position = action_position_emitter(Action::RequestRandomNeighbor);
+         position->x += delta_position->x;
+         position->y += delta_position->y;
       });
    }
    void draw();

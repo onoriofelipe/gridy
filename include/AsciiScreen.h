@@ -21,7 +21,7 @@ public:
    virtual void write_errors() = 0;
 
    draw_emitter_t draw_emitter;
-   ActionHandler action_handler;
+   ActionHandler<void> action_handler;
 };
 
 /**

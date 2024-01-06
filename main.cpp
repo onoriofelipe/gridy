@@ -29,10 +29,10 @@ void test_connector(){
    //         the raw pointers to connector
    auto player = make_default_player();
    Connector connector{
-      &game_context,
-      &input_handler,
-      &screen,
-      player.get()
+      // &game_context,
+      // &input_handler,
+      // &screen,
+      // player.get()
    };
    connector.stablish_connections();
    game_context.do_game_loop();

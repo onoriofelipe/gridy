@@ -14,7 +14,7 @@
 //         are implemented. for now, deal with the troubles related to subtraction with
 //         unsigned integer modular arithmetic
 struct Position {
-   Position(int32_t x, int32_t y): x{x}, y{y} {}
+   Position(int32_t x = 0, int32_t y = 0): x{x}, y{y} {}
    int32_t x;
    int32_t y;
 };
