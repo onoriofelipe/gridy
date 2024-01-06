@@ -22,4 +22,15 @@ actual priority list of priorities for real
 
 */
 
+/*
+emitter convention:
+   []who has the information emits it?
+      []no, for now use the component container for emitting, because it should
+         be related to behaviors which should be handled by each entity
+      []define clearly who has the 
+   []convention for commands should be different than from requests?
+   []whoever has the data to be operated needs to...?
+
+*/
+
 #endif // __FEATURE_PRIORITY_H__
