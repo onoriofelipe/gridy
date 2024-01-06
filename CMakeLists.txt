@@ -41,6 +41,7 @@ target_sources(gridy PUBLIC   ./main.cpp
                               include/ActionHandler.h
                               include/ExternalInputHandler.h
                               include/Components.h
+                              include/RandomGenerator.h
 )
 target_compile_options(gridy PRIVATE -Wall)
 # if(NOT CURSES_FOUND)

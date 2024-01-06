@@ -96,6 +96,9 @@ enum class Action {
    Quit,
    HandleInputs,
    Draw,
+   RequestRandomNeighbor, // assume 8 neighbors for each cell
+   RequestRandomFloat,    // assume range 0.0f - 1.0f
+   RequestRandomBool,     // consider using float instead? for different ranges, or also an argument somehow
 };
 using action_emitter_t = boost::signals2::signal<void(Action action)>;
 
@@ -131,8 +134,11 @@ std::ostream& operator<<(std::ostream& os, const Action& action){
       {Action::UseHotkey_9,        "UseHotkey_9"},
       {Action::GetAttacked,        "GetAttacked"},
       {Action::Quit,               "Quit"},
-      {Action::HandleInputs,               "HandleInputs"},
-      {Action::Draw,               "Draw"},
+      {Action::HandleInputs,          "HandleInputs"},
+      {Action::Draw,                  "Draw"},
+      {Action::RequestRandomNeighbor, "RequestRandomNeighbor"},
+      {Action::RequestRandomFloat,    "RequestRandomFloat"},
+      {Action::RequestRandomBool,     "RequestRandomBool"},
    };
    os << action_to_string_map[action];
    return os;
