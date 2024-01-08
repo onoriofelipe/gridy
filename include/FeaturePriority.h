@@ -12,7 +12,20 @@ actual priority list of priorities for real
          []someday find out the performance costs besides the connection overhead that may happen if too many components
             are instantiated in a short period of time
 [sort of]connection request for runtime connections standards
-[]add boostbgl-backed graph map
+[]graphmap class for dealing with the map using graph interfaces
+   []define which tiles need individual properties; more likely we need only one piece
+      of each tile type with no runtime dynamic state, and their world positions;
+      []tiles are the vertices of graph;
+      []connections can be defined initially by their relative position (in world coords) with no path restrictions;
+      []consider adding tile properties for each individual tile; like list of things associated with it, or blood splatters
+   []loadeable and saveable tiles from a csv file or something
+      []consider serialization using cereal lib
+[]add boostbgl-backing for graphmap
+   []define a sort of camera-view: if object is within camera range, then draw() writes to framebuffer, otherwise is considered culled
+      []separate graphmap coordinates (world coordinates) from screen draw coordinates
+   []things that operate on positions will ask the graphmap for permission
+   []graphmap will define valid positions and valid paths between neighbors
+   []graphmap may answer to shortest-path requests with valid values if distance is less than predefined range
 []try to implement a behavior tree from scratch
    []if it fails research how to do it
    [x]after proper graph movement is added?
@@ -20,6 +33,8 @@ actual priority list of priorities for real
 []implement A* / Djikstra
 []decide how an attack can be achieved from player to monster, potentially needs the graph
    []think about graph
+[]attacks make tiles dirty with directional blood splatters
+[]standardize on turn duration and cooldowns
 
 */
 
