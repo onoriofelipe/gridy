@@ -50,6 +50,7 @@ public:
 
    void generate_specifically_hardcoded_game(){
       game_context_ = std::make_shared<GameContext>();
+      game_context_->create_some_things(); // create 4 monsters
       input_handler_ = std::make_shared<ExternalInputHandler>();
       random_generator_ = std::make_shared<RandomGenerator>();
       screen_ = std::make_shared<AsciiScreen<30,60>>();
@@ -87,18 +88,36 @@ public:
       connections.push_back(screen_->draw_emitter.connect([this](Screen* screen_arg){
          player_->drawing_component->draw(screen_arg);
       }));
-      for(auto& thing: game_context_->things){
-         connections.push_back(game_context_->event_generator.connect([this,&thing](Action action){
-            thing->action_handler.on_action(action);
+      // many syntaxes were explored when trying to find segmentation faults;
+      // no specific syntax was related to the actual bug. this is the last syntax that was tested;
+      ///[]TODO: choose better syntax
+      for(auto thing_it = game_context_->things.begin(); thing_it != game_context_->things.end(); ++thing_it){
+         // auto p_thing = thing.get();
+         connections.push_back(game_context_->event_generator.connect([=](Action action){
+            (*thing_it)->action_handler.on_action(action);
          }));
          ///[]TODO: interesting point here: there can be multiple calling conventions
-         connections.push_back(screen_->draw_emitter.connect([this,&thing](Screen* screen_arg){
-            thing->drawing_component->draw(screen_arg);
+         connections.push_back(screen_->draw_emitter.connect([=](Screen* screen_arg){
+            (*thing_it)->drawing_component->draw(screen_arg);
          }));
-         connections.push_back(thing->action_emitter.connect([this,&thing](Action action){
-            random_generator_->action_handler.on_action(action);
+         connections.push_back((*thing_it)->action_position_emitter.connect([=](Action action){
+            return random_generator_->action_handler.on_action(action);
          }));
       }
+      // for(auto thing: game_context_->things){
+      //    // auto p_thing = thing.get();
+      //    connections.push_back(game_context_->event_generator.connect([=](Action action){
+      //       thing->action_handler.on_action(action);
+      //    }));
+      //    ///[]TODO: interesting point here: there can be multiple calling conventions
+      //    connections.push_back(screen_->draw_emitter.connect([=](Screen* screen_arg){
+      //       thing->drawing_component->draw(screen_arg);
+      //    }));
+      //    connections.push_back(thing->action_emitter.connect([=](Action action){
+      //       random_generator_->action_handler.on_action(action);
+      //    }));
+      // }
+      std::cerr << "connections number:" << connections.size() << std::endl;
    }
 };
 

@@ -39,6 +39,8 @@ public:
          x_delta = int_distribution(engine);
          y_delta = int_distribution(engine);
       }
+      std::cerr << "randomly generated delta values <x, y>: " << x_delta << ", " << y_delta << std::endl;
+      std::cout << "randomly generated delta values <x, y>: " << x_delta << ", " << y_delta << std::endl;
       return Position{x_delta, y_delta};
    }
 

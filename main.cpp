@@ -22,21 +22,22 @@
 using uchar = unsigned char;
 
 void test_connector(){
-   GameContext game_context{};
-   ExternalInputHandler input_handler{};
-   auto screen = AsciiScreen<30, 60>{};
+   // GameContext game_context{};
+   // ExternalInputHandler input_handler{};
+   // auto screen = AsciiScreen<30, 60>{};
    ///[]TODO: create the connector arguments, mostly using make_xxx(), passing
    //         the raw pointers to connector
-   auto player = make_default_player();
+   // auto player = make_default_player();
    Connector connector{
       // &game_context,
       // &input_handler,
       // &screen,
       // player.get()
    };
-   connector.stablish_connections();
-   game_context.do_game_loop();
-   connector.close_connections();
+   connector.generate_specifically_hardcoded_game();
+   // connector.stablish_connections();
+   // game_context.do_game_loop();
+   // connector.close_connections();
 }
 
 #ifdef __linux__
@@ -92,8 +93,9 @@ void epilogue(){
 //         [x] error redirection in log file
 //         [] future: error redirection in ascii screen as described somewhere else
 //         [] future: create debug log class instead of relying on std::cerr
-//         [x] next: 
+//         [] next: 
 int main(){
+   std::cout << "aaaa" << std::endl;
    // no elegant method for redirecting streams without running into raii issue yet
    std::streambuf* original_cerr_stream = std::cerr.rdbuf();
    std::ofstream error_filestream("logs.txt");

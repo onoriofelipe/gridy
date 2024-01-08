@@ -12,9 +12,9 @@ class GameContext {
 public:
    GameContext(){
       action_handler.register_action_handler(Action::Quit, [this](){
-      stop();
-	});
-      create_some_things();
+         stop();
+      });
+      // create_some_things();
    }
    bool should_stop_loop{false};
    void stop(){
@@ -33,7 +33,11 @@ public:
          if(some_counter == 0 ){
             action_emitter(Action::SomeTicks);
             //\\ another concept: multiple event sources, maybe for different scopes
+            // std::cout << "before move random" << std::endl;
+            // std::cerr << "before move random" << std::endl;
             event_generator(Action::MoveRandom);
+            // std::cout << "after move random" << std::endl;
+            // std::cerr << "after move random" << std::endl;
          // event_generator.generate_random_move()
          }
          ///[]TODO: do proper time accumulation so no frame skipping occurs
