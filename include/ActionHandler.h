@@ -35,8 +35,8 @@ public:
       auto it = action_map.find(action);
       if(it != action_map.end()){
          // call action callback
-         std::cout << "found action in ActionHandler<R>" << std::endl;
-         std::cerr << "found action in ActionHandler<R>" << std::endl;
+         // std::cout << "found action in ActionHandler<R>" << std::endl;
+         // std::cerr << "found action in ActionHandler<R>" << std::endl;
          return (it->second)();
       }
       std::cout << "Action not found in ActionHandler<R>, returning default!!!" << std::endl;

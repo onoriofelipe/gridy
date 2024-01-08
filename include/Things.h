@@ -101,18 +101,18 @@ public:
          Thing(p, r, health, attributes, d)
    {
       action_handler.register_action_handler(Action::MoveRandom, [this](){
-         std::cerr << "before requesting random neighbor" << std::endl;
+         // std::cerr << "before requesting random neighbor" << std::endl;
          // Position delta_position = action_position_emitter(Action::RequestRandomNeighbor);
          if(!action_position_emitter.empty()){
             auto delta_position = action_position_emitter(Action::RequestRandomNeighbor);
             position->x += delta_position->x;
             position->y += delta_position->y;
-            std::cerr << "thing positions updated" << std::endl;
+            // std::cerr << "thing positions updated" << std::endl;
          } else {
             std::cout << "Skipping action_position_emitter(Action::RequestRandomNeighbor) because no connections. :(" << std::endl;
          }
-         std::cout << "This action_position_emitter is associated with num_slots: " << action_position_emitter.num_slots() << std::endl;
-         std::cerr << "after requesting random neighbor" << std::endl;
+         // std::cout << "This action_position_emitter is associated with num_slots: " << action_position_emitter.num_slots() << std::endl;
+         // std::cerr << "after requesting random neighbor" << std::endl;
       });
    }
    void draw();
