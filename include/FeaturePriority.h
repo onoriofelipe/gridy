@@ -13,6 +13,9 @@ actual priority list of priorities for real
             are instantiated in a short period of time
 [sort of]connection request for runtime connections standards
 []graphmap class for dealing with the map using graph interfaces
+   []interface for players, monsters, things: move intention is sent to graphmap via
+      event, answer is the new position
+      []use set of constant positions as directions: N is Position{0,+1}, SW is Position{+1,-1}
    []define which tiles need individual properties; more likely we need only one piece
       of each tile type with no runtime dynamic state, and their world positions;
       []tiles are the vertices of graph;
@@ -35,6 +38,9 @@ actual priority list of priorities for real
    []think about graph
 []attacks make tiles dirty with directional blood splatters
 []standardize on turn duration and cooldowns
+
+[]do bizarro world / vegan version sprites for subversion of aesthetics:
+   []instead of monsters being killed, seeds are watered and bloom into cute plants
 
 */
 

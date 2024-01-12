@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "AsciiScreen.h"
+#include "PositionPrimitives.h"
 
 ///[]TODO: use entities composed of components
 //         (as in entity-component-system organization)
@@ -13,11 +14,8 @@
 //         just for the sake of simplification. this will change when world camera views
 //         are implemented. for now, deal with the troubles related to subtraction with
 //         unsigned integer modular arithmetic
-struct Position {
-   Position(int32_t x = 0, int32_t y = 0): x{x}, y{y} {}
-   int32_t x;
-   int32_t y;
-};
+
+
 struct Representation {
    Representation(char c): c{c} {}
    char c{'X'};
@@ -63,10 +61,7 @@ struct Attributes {
    // uint32_t crit_damage;
 };
 
-std::shared_ptr<Position> make_position(int32_t x, int32_t y){
-   auto p = std::make_shared<Position>(x, y);
-   return p;
-}
+
 std::shared_ptr<Representation> make_representation(char c){
    auto r = std::make_shared<Representation>(c);
    return r;
