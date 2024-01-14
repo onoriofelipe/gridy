@@ -41,6 +41,9 @@ actual priority list of priorities for real
 
 []do bizarro world / vegan version sprites for subversion of aesthetics:
    []instead of monsters being killed, seeds are watered and bloom into cute plants
+[]funny item names
+   []negocim de queijo
+
 
 */
 
