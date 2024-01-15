@@ -16,7 +16,8 @@ public:
    RandomGenerator():
    engine{rd()},
    float_distribution{0, 1},
-   int_distribution{-1, 1}
+   int_distribution{-1, 1},
+   neighbor_distribution{0, 7}
    {
       action_handler.register_action_handler(Action::RequestRandomNeighbor, [this](/*std::shared_ptr<Position> p*/) -> Position {
          return generate_random_neighbor_delta();
@@ -26,8 +27,10 @@ public:
    std::mt19937 engine;
    std::uniform_real_distribution<float> float_distribution;
    std::uniform_int_distribution<int32_t> int_distribution;
+   std::uniform_int_distribution<int32_t> neighbor_distribution;
 
    // for now, return one of eight neighbors, with coords -1 or 0 or 1 for x and y
+   ///[]TODO: substitute for random direction instead
    Position generate_random_neighbor_delta(){
       int32_t x_delta{0};
       int32_t y_delta{0};
@@ -42,6 +45,12 @@ public:
       // std::cerr << "randomly generated delta values <x, y>: " << x_delta << ", " << y_delta << std::endl;
       // std::cout << "randomly generated delta values <x, y>: " << x_delta << ", " << y_delta << std::endl;
       return Position{x_delta, y_delta};
+   }
+   Direction generate_random_direction(){
+      static std::array<Direction, 8> directions { D::N, D::NE, D::E, D::SE,
+                                                   D::S, D::SW, D::W, D::NW };
+      auto random_int = neighbor_distribution(engine);
+      return directions[random_int];
    }
 
    ActionHandler<Position> action_handler;

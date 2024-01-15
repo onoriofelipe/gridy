@@ -105,6 +105,9 @@ public:
          // Position delta_position = action_position_emitter(Action::RequestRandomNeighbor);
          if(!action_position_emitter.empty()){
             auto delta_position = action_position_emitter(Action::RequestRandomNeighbor);
+            auto next_position = action_position_emitter(position? position_component? must pass data to graph map somehow);
+            //\\next: define proper way to pass two world positions for the graph map, specifying positions could work but check if there is a cleaner approach,
+            //        explore the possibilities
             position->x += delta_position->x;
             position->y += delta_position->y;
             // std::cerr << "thing positions updated" << std::endl;
