@@ -7,6 +7,8 @@
 #include <boost/graph/adjacency_list.hpp>
 #include "PositionPrimitives.h"
 
+///[]TODO: add an empty dummy tile, instead of using wall as the dummy since
+//         walls can have way more funcionality than a simply dummy tile
 enum class TileType {
    Wall = 0, // dummy tiles by default
    Floor,
@@ -30,13 +32,22 @@ public:
       // of dummy tiles is never connected? maybe the more general approach should be
       // considered, where the interaction with a new tile may have side-effects;
       auto requested_position = old_position + requested_direction;
-      if(is_neighbor(old_position, requested_position)){
+      if(is_connected_neighbor(old_position, requested_position)){
          resulting_position = requested_position;
       }
       return resulting_position;
    }
-   bool is_neighbor(Position a, Position b){
+   bool is_connected_neighbor(Position a, Position b){
+      bool is_neighbor{false};
       // do boost magic
+      Tile tile_a = index_from_position(a);
+      Tile tile_b = index_from_position(b);
+      is_neighbor = boost::edge(a, b, graph).first;
+      return is_neighbor;
+   }
+   std::vector<int32_t> neighbors_of(int32_t tile_index);
+   bool valid_tile_range(Position p){
+      return ( p.x >= 0 && p.x < width && p.y >= 0 && p.y < height );
    }
    int32_t index_from_position(Position p){
       int32_t index{0};
@@ -65,22 +76,47 @@ public:
    }
    void connect_neighbors();
    bool populate_map(std::string map_name);
-   boost::adjacency_list<> graph;
+   boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS> graph;
    std::vector<Tile> tile_map{};
    std::vector<int32_t> tile_indexes{};
    uint32_t width{0};
    uint32_t height{0};
 };
 
-std::array<Position> neighbors_of()
+std::vector<int32_t> GraphMap::neighbors_of(Position tile_position){
+   static std::vector<Direction> neighbor_directions{ D::N, D::NE, D::E, D::SE,
+                                                      D::S, D::SW, D::W, D::NW};
+   std::vector<int32_t> neighbor_indexes;
+   bool valid_range{false};
+   Position neighbor_position{0, 0};
+
+   for(const auto& direction: neighbor_directions){
+      neighbor_position = tile_position + direction;
+      valid_range = valid_tile_range(neighbor_position);
+      if(valid_range){
+         neighbor_indexes.push_back();
+      }
+   }
+   return neighbor_indexes;
+}
 
 void GraphMap::connect_neighbors(){
    // D D D F D D
    // D F F F F D
    // D D F F D D
    // D D D F D D
-   for(const auto& tile: tile_map){
-      
+   for(const auto& tile_index: tile_indexes){
+      if(tile_map[tile_index].type == TileType::Wall /* || or other criteria for not connecting to anything */){
+         continue;
+      }
+      auto neighbor_indexes = neighbors_of(position_from_index(tile_index));
+      // assume that central tile should be connected unless neighbor restricts it
+      for (const auto& neighbor_index: neighbor_indexes){
+         if(tile_map[neighbor_index].type == TileType::Floor){
+            // create connection using boost indices
+            boost::add_edge(tile_index, neighbor_index, graph);
+         }
+      }
    }
 }
 
@@ -95,13 +131,14 @@ bool GraphMap::populate_map(std::string map_name/*, boost::adjacency_list<>& g, 
    bool parse_successful{true};
    bool parse_unsuccessful{false};
    std::string line{};
+   std::string header_string{};
    {
-      std::ofstream map_file_stream(map_name);
-      auto header_string = std::getline(map_file_stream, line);
+      std::ifstream map_file_stream(map_name);
+      std::getline(map_file_stream, header_string);
       {
          std::stringstream header_string_stream(header_string);
-         width << header_string_stream;
-         height << header_string_stream;
+         header_string_stream >> width;
+         header_string_stream >> height;
       }
       if (width == 0 || height == 0){
          return parse_unsuccessful;
