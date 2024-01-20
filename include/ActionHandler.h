@@ -11,6 +11,27 @@
 //         such as complex combat events?
 ///[]TODO: maybe use variant for return type instead of hardcoding types handled
 //         with different pipelines
+///[]TODO: use perfect forwarding  and variadic template 
+///        to replace all the redundant
+///        pseudo-overloads
+template <typename R, typename Arg>
+class ActionHandler {
+public:
+   template <typename F>
+   void register_action_handler(Action action, F&& handler){
+      action_map[action] = std::function<R(Arg)>(handler);
+   }
+   R on_action(Action action, Arg arg){
+      auto it = action_map.find(action);
+      if(it != action_map.end()){
+         return (it->second)(arg);
+      }
+      std::cout << "Action not found in ActionHandler<R,Arg>, returning default!!!" << std::endl;
+      std::cerr << "Action not found in ActionHandler<R,Arg>, returning default!!!" << std::endl;
+      return R();
+   }
+   std::map<Action,std::function<R(Arg)>> action_map{};
+};
 template <typename R>
 class ActionHandler {
 public:

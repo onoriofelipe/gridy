@@ -115,6 +115,7 @@ enum class Action {
    HandleInputs,
    Draw,
    RequestRandomNeighbor, // assume 8 neighbors for each cell
+   RequestConnectedPosition,
    RequestRandomFloat,    // assume range 0.0f - 1.0f
    RequestRandomBool,     // consider using float instead? for different ranges, or also an argument somehow
    SomeTicks,
@@ -156,6 +157,7 @@ std::ostream& operator<<(std::ostream& os, const Action& action){
       {Action::HandleInputs,          "HandleInputs"},
       {Action::Draw,                  "Draw"},
       {Action::RequestRandomNeighbor, "RequestRandomNeighbor"},
+      {Action::RequestConnectedPosition, "RequestConnectedoPosition"},
       {Action::RequestRandomFloat,    "RequestRandomFloat"},
       {Action::RequestRandomBool,     "RequestRandomBool"},
       {Action::SomeTicks,             "SomeTicks"},

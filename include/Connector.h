@@ -103,6 +103,9 @@ public:
          connections.push_back((*thing_it)->action_position_emitter.connect([=](Action action){
             return random_generator_->action_handler.on_action(action);
          }));
+         connections.push_back((*thing_it)->action_position_requester.connect([=](Action action){
+            return graph_map_->action_handler.on_action(action);
+         }));
       }
       // for(auto thing: game_context_->things){
       //    // auto p_thing = thing.get();

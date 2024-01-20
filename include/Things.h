@@ -15,6 +15,7 @@
 
 // too much coupling for position?
 using action_position_emitter_t = boost::signals2::signal<Position(Action action)>;
+using action_position_requester_t = boost::signals2::signal<Position(Action action, Position current)>;
 
 ///[]TODO: check if 64 bits is virtually infinite things or ir we need 128 bits
 // ids: this system of identification will be used when one entity needs to

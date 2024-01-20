@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <pair>
 #include <boost/graph/adjacency_list.hpp>
 #include "PositionPrimitives.h"
 
@@ -22,6 +23,13 @@ struct Tile {
 
 class GraphMap {
 public:
+   GraphMap():
+   {
+      action_handler.register_action_handler([this](){
+         
+      });
+   }
+   ActionHandler<Position, std::pair<>> action_handler;
    // given a position and a direction, what should be the new position?
    ///[]TODO: make this either more simplistic or more convoluted
    Position request_move(Position old_position, Direction requested_direction){
@@ -37,6 +45,11 @@ public:
       }
       return resulting_position;
    }
+   ///[]TODO: implement lookup for  all things based on positioo;
+   ///        for now; for this, registra tion for every thing 
+   ///        is probably needed 
+   ///[]TODO: also, consider how feasible it is to separate into
+   ///        some other possible component or system
    bool is_connected_neighbor(Position a, Position b){
       bool is_neighbor{false};
       // do boost magic

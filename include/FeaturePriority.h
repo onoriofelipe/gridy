@@ -43,6 +43,9 @@ actual priority list of priorities for real
    []instead of monsters being killed, seeds are watered and bloom into cute plants
 []funny item names
    []negocim de queijo
+[]enemy concepts
+   []catioro da bitiura (ambush enemy) / da andradas 
+   []a bitiura, mysterious entity
 
 
 */
