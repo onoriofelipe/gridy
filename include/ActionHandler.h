@@ -28,13 +28,22 @@ public:
    void register_action_handler(Action action, F&& handler){
       action_map[action] = std::function<R(Args&&...)>(handler);
    }
-   R on_action(Action action, Args&&... args){
+   // without the template for this function:
+   // not universal reference, so errors happen when trying to bind some lvalue
+   // (like a local name in a lambda stack) to this Args&& which would be rvalue reference,
+   // which necessarily forces the user to cast to rvalue using std::move at the call site
+   // so... a template function is needed to make this a type deduction context
+   // also: Blargs should equal Args
+   // also: compilation time went from 2 to 18 seconds😂
+   template<typename ...Blargs>
+   R on_action(Action action, Blargs&&... args){
       auto it = action_map.find(action);
       if(it != action_map.end()){
-         return (it->second)(std::forward<Args>(args)...);
+         return (it->second)(std::forward<Blargs>(args)...);
       }
-      std::cout << "Action not found in ActionHandler<R,Arg>, returning default!!!" << std::endl;
-    //   std::cerr << "Action not found in ActionHandler<R,Arg>, returning default!!!" << std::endl;
+      ///[]TODO: decide error convention, should go anywhere it can be easily seen during debugging
+      std::cout << "Action not found in ActionHandler<R,...Args>, returning default R()!!!" << std::endl;
+      // std::cerr << "Action not found in ActionHandler<R,Arg>, returning default!!!" << std::endl;
       return R();
    }
    std::map<Action,std::function<R(Args...)>> action_map{};

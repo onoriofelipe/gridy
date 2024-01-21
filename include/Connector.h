@@ -110,6 +110,7 @@ public:
          }));
          connections.push_back((*thing_it)->graph_neighbor_requester.connect([=](Action action, Position position, Direction direction) -> Position {
             return graph_map_->neighbor_request_handler.on_action(action, position, direction);
+            // return graph_map_->neighbor_request_handler.on_action(action, std::move(position), std::move(direction));
          }));
       }
       // for(auto thing: game_context_->things){

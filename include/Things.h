@@ -113,13 +113,15 @@ public:
          // std::cerr << "before requesting random neighbor" << std::endl;
          // Position delta_position = action_position_emitter(Action::RequestRandomNeighbor);
          if(!random_direction_requester.empty()){
-            auto delta_direction = random_direction_requester(Action::RequestRandomNeighbor);
-            auto next_position = graph_neighbor_requester(Action::RequestConnectedNeighbor, *position, delta_direction);
+            Direction delta_direction = *random_direction_requester(Action::RequestRandomNeighbor);
+            Position next_position = *graph_neighbor_requester(Action::RequestConnectedNeighbor, *position, delta_direction);
             //[x]next: define proper way to pass two world positions for the graph map, specifying positions could work but check if there is a cleaner approach,
             //        explore the possibilities
             // position->x += delta_position->x;asdasd
             // position->y += delta_position->y;asdasd
             // std::cerr << "thing positions updated" << std::endl;
+            position->x = next_position.x;
+            position->y = next_position.y;
          } else {
             std::cout << "Skipping random_direction_requester(Action::RequestRandomNeighbor) because no connections. :(" << std::endl;
          }

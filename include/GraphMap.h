@@ -4,9 +4,8 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <pair>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/signals2.hpp>
+#include <boost/signals2.hpp>
 #include "PositionPrimitives.h"
 #include "ActionHandler.h"
 
@@ -25,9 +24,12 @@ struct Tile {
    // additionally, any other interesting properties
 };
 
+void generate_map(std::string map_name);
+Tile map_char_to_tile(char c);
+
 class GraphMap {
 public:
-   GraphMap():
+   GraphMap()
    {
       register_handlers();
    }
@@ -52,22 +54,23 @@ public:
       }
       return resulting_position;
    }
-   ///[]TODO: implement lookup for  all things based on positioo;
-   ///        for now; for this, registra tion for every thing
+   ///[]TODO: implement lookup for  all things based on position,
+   ///        for now; for this, registration for every thing
    ///        is probably needed
    ///[]TODO: also, consider how feasible it is to separate into
    ///        some other possible component or system
    bool is_connected_neighbor(Position a, Position b){
       bool is_neighbor{false};
       // do boost magic
-      Tile tile_a = index_from_position(a);
-      Tile tile_b = index_from_position(b);
-      is_neighbor = boost::edge(a, b, graph).first;
+      auto tile_a_index = index_from_position(a);
+      auto tile_b_index = index_from_position(b);
+      is_neighbor = boost::edge(tile_a_index, tile_b_index, graph).second; // nigh unreadable implementation in boost
       return is_neighbor;
    }
-   std::vector<int32_t> neighbors_of(int32_t tile_index);
+   std::vector<int32_t> neighbors_of(Position tile_position);
+
    bool valid_tile_range(Position p){
-      return ( p.x >= 0 && p.x < width && p.y >= 0 && p.y < height );
+      return ( p.x >= 0 && p.x < static_cast<int32_t>(width) && p.y >= 0 && p.y < static_cast<int32_t>(height) );
    }
    int32_t index_from_position(Position p){
       int32_t index{0};
@@ -114,7 +117,7 @@ std::vector<int32_t> GraphMap::neighbors_of(Position tile_position){
       neighbor_position = tile_position + direction;
       valid_range = valid_tile_range(neighbor_position);
       if(valid_range){
-         neighbor_indexes.push_back();
+         neighbor_indexes.push_back(index_from_position(neighbor_position));
       }
    }
    return neighbor_indexes;
@@ -180,8 +183,8 @@ bool GraphMap::populate_map(std::string map_name/*, boost::adjacency_list<>& g, 
             // 0 1 2 3 4 5
             // width
             // 3
-            boost::add_vertex(g);
-            external_tiles.push_back(map_char_to_tile(c));
+            boost::add_vertex(graph);
+            tile_map.push_back(map_char_to_tile(c));
             tile_indexes.push_back(index_counter);
             ++index_counter;
             ++char_counter;
@@ -212,40 +215,40 @@ void generate_map(std::string map_name){
       //         with maze algorithms and perlin noise and voronoy noise, research how to
       //         use noise for housing complex generation or anything with such arbitrary
       //         geometric requirements
-      std::ifstream artificial_map(map_name);
+      std::ofstream artificial_map(map_name);
       // 60 width 30 height map
-      artificial_map << std::string{"
-                        DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n
-                        DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n
-                        "};
+      artificial_map << std::string{"\
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD\n\
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n\
+"};
    }
 }
 
