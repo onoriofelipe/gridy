@@ -20,6 +20,7 @@ public:
    virtual void draw() = 0;
    virtual void write_errors() = 0;
 
+   virtual void register_handlers() = 0;
    draw_emitter_t draw_emitter;
    ActionHandler<void> action_handler;
 };
@@ -34,9 +35,7 @@ template <uint64_t H, uint64_t W>
 class AsciiScreen: public Screen {
 public:
    AsciiScreen(){
-      action_handler.register_action_handler(Action::Draw, [this](){
-         draw();
-      });
+      register_handlers();
       for(auto i = uint32_t{0}; i < H*(W+1); ++i){
          buffer[i] = '~'; // why not '~'
       }
@@ -50,6 +49,13 @@ public:
    static const uint64_t Wi{W};
    uint32_t cursor_line{H};
    std::array<uchar, H * (W + 1) + 1> buffer;
+
+   virtual void register_handlers() override {
+      action_handler.register_action_handler(Action::Draw, [this](){
+         draw();
+      });
+   }
+
    ///[]TODO: rewrite api using ranges/view syntax
    uchar& pixel_ref(uint32_t column, uint32_t line) override {
       line = H - 1 - line;

@@ -6,7 +6,11 @@
 #include <sstream>
 #include <pair>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/signals2.hpp>
 #include "PositionPrimitives.h"
+#include "ActionHandler.h"
+
+// using graph_neighbor_requester_t = boost::signals2::signal<Position(Action, Position, Direction)>;
 
 ///[]TODO: add an empty dummy tile, instead of using wall as the dummy since
 //         walls can have way more funcionality than a simply dummy tile
@@ -25,14 +29,17 @@ class GraphMap {
 public:
    GraphMap():
    {
-      action_handler.register_action_handler([this](){
-         
+      register_handlers();
+   }
+   void register_handlers(){
+      neighbor_request_handler.register_action_handler(Action::RequestConnectedNeighbor, [this](Position p, Direction d) -> Position {
+         return request_neighbor_move(p, d);
       });
    }
-   ActionHandler<Position, std::pair<>> action_handler;
+   ActionHandler<Position, Position, Direction> neighbor_request_handler;
    // given a position and a direction, what should be the new position?
    ///[]TODO: make this either more simplistic or more convoluted
-   Position request_move(Position old_position, Direction requested_direction){
+   Position request_neighbor_move(Position old_position, Direction requested_direction){
       auto resulting_position = old_position;
       // consider other filtering criteria;
       // for now it's enough to either go through a neighbor
@@ -46,8 +53,8 @@ public:
       return resulting_position;
    }
    ///[]TODO: implement lookup for  all things based on positioo;
-   ///        for now; for this, registra tion for every thing 
-   ///        is probably needed 
+   ///        for now; for this, registra tion for every thing
+   ///        is probably needed
    ///[]TODO: also, consider how feasible it is to separate into
    ///        some other possible component or system
    bool is_connected_neighbor(Position a, Position b){

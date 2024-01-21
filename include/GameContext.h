@@ -11,9 +11,7 @@
 class GameContext {
 public:
    GameContext(){
-      action_handler.register_action_handler(Action::Quit, [this](){
-         stop();
-      });
+      register_handlers();
       // create_some_things();
    }
    bool should_stop_loop{false};
@@ -49,6 +47,11 @@ public:
       things.push_back(make_default_monster());
       things.push_back(make_default_monster());
       things.push_back(make_default_monster());
+   }
+   void register_handlers(){
+      action_handler.register_action_handler(Action::Quit, [this](){
+         stop();
+      });
    }
    std::vector<std::shared_ptr<Thing>> things{};
    ActionHandler<void> action_handler;

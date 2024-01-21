@@ -10,6 +10,7 @@
 #include "AsciiScreen.h"
 #include "ExternalInputHandler.h"
 #include "RandomGenerator.h"
+#include "GraphMap.h"
 
 // []test new convention: 1 connector for each different game, connector wraps and self-contains
 //   all the boilerplate logic, consider making it an hierarchy for enforcing conventions
@@ -29,6 +30,7 @@ public:
    std::shared_ptr<Screen> screen_;
    std::shared_ptr<RandomGenerator> random_generator_;
    std::shared_ptr<GameContext> game_context_;
+   std::shared_ptr<GraphMap> graph_map_;
 
    Connector()
    // GameContext* game_context,
@@ -51,23 +53,26 @@ public:
    void generate_specifically_hardcoded_game(){
       game_context_ = std::make_shared<GameContext>();
       game_context_->create_some_things(); // create 4 monsters
-      input_handler_ = std::make_shared<ExternalInputHandler>();
-      random_generator_ = std::make_shared<RandomGenerator>();
-      screen_ = std::make_shared<AsciiScreen<30,60>>();
-      ///[]TODO: create the connector arguments, mostly using make_xxx(), passing
-      //         the raw pointers to connector
-      player_ = make_default_player();
-      // auto monster_1 = make_default_monster();
-      // auto monster_2 = make_default_monster();
-      // Connector connector {
-      //    &game_context,
-      //    &input_handler,
-      //    &screen,
-      //    player.get()
-      // };
-      stablish_connections();
-      game_context_->do_game_loop();
-      close_connections();
+      graph_map_ = std::make_shared<GraphMap>();
+      if(graph_map_->load_graphmap_from_file("first_map.txt")){
+         input_handler_ = std::make_shared<ExternalInputHandler>();
+         random_generator_ = std::make_shared<RandomGenerator>();
+         screen_ = std::make_shared<AsciiScreen<30,60>>();
+         ///[]TODO: create the connector arguments, mostly using make_xxx(), passing
+         //         the raw pointers to connector
+         player_ = make_default_player();
+         // auto monster_1 = make_default_monster();
+         // auto monster_2 = make_default_monster();
+         // Connector connector {
+         //    &game_context,
+         //    &input_handler,
+         //    &screen,
+         //    player.get()
+         // };
+         stablish_connections();
+         game_context_->do_game_loop();
+         close_connections();
+      }
    }
 
    void stablish_connections(){
@@ -100,11 +105,11 @@ public:
          connections.push_back(screen_->draw_emitter.connect([=](Screen* screen_arg){
             (*thing_it)->drawing_component->draw(screen_arg);
          }));
-         connections.push_back((*thing_it)->action_position_emitter.connect([=](Action action){
-            return random_generator_->action_handler.on_action(action);
+         connections.push_back((*thing_it)->random_direction_requester.connect([=](Action action) -> Direction {
+            return random_generator_->random_direction_request_handler.on_action(action);
          }));
-         connections.push_back((*thing_it)->action_position_requester.connect([=](Action action){
-            return graph_map_->action_handler.on_action(action);
+         connections.push_back((*thing_it)->graph_neighbor_requester.connect([=](Action action, Position position, Direction direction) -> Position {
+            return graph_map_->neighbor_request_handler.on_action(action, position, direction);
          }));
       }
       // for(auto thing: game_context_->things){

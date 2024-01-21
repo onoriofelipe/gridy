@@ -14,8 +14,8 @@
 #include "Components.h"
 
 // too much coupling for position?
-using action_position_emitter_t = boost::signals2::signal<Position(Action action)>;
-using action_position_requester_t = boost::signals2::signal<Position(Action action, Position current)>;
+using random_direction_requester_t = boost::signals2::signal<Direction(Action)>;
+using graph_neighbor_requester_t = boost::signals2::signal<Position(Action, Position, Direction)>;
 
 ///[]TODO: check if 64 bits is virtually infinite things or ir we need 128 bits
 // ids: this system of identification will be used when one entity needs to
@@ -48,6 +48,20 @@ public:
             drawing_component{d},
             id{ID::generate_id()}
    {
+      Thing::register_handlers();
+   }
+   std::shared_ptr<Position> position;
+   std::shared_ptr<Representation> representation;
+   Health health;
+   Attributes attributes;
+   std::shared_ptr<DrawingComponent> drawing_component;
+   ID id;
+   ActionHandler<void> action_handler;
+   action_emitter_t action_emitter;
+   random_direction_requester_t random_direction_requester;
+   graph_neighbor_requester_t graph_neighbor_requester;
+
+   virtual void register_handlers(){
       // for now, initially all things are moveable as long as they receive the order
       ///[]TODO: watch out for memory explosion or fragmentation
       action_handler.register_action_handler(Action::MoveUp, [this](){
@@ -63,15 +77,6 @@ public:
          this->position->x += 1;
       });
    }
-   std::shared_ptr<Position> position;
-   std::shared_ptr<Representation> representation;
-   Health health;
-   Attributes attributes;
-   std::shared_ptr<DrawingComponent> drawing_component;
-   ID id;
-   ActionHandler<void> action_handler;
-   action_emitter_t action_emitter;
-   action_position_emitter_t action_position_emitter;
 };
 
 class Player: public Thing{
@@ -101,19 +106,22 @@ public:
             std::shared_ptr<DrawingComponent> d):
          Thing(p, r, health, attributes, d)
    {
+      Monster::register_handlers();
+   }
+   void register_handlers() override {
       action_handler.register_action_handler(Action::MoveRandom, [this](){
          // std::cerr << "before requesting random neighbor" << std::endl;
          // Position delta_position = action_position_emitter(Action::RequestRandomNeighbor);
-         if(!action_position_emitter.empty()){
-            auto delta_position = action_position_emitter(Action::RequestRandomNeighbor);
-            auto next_position = action_position_emitter(position? position_component? must pass data to graph map somehow);
-            //\\next: define proper way to pass two world positions for the graph map, specifying positions could work but check if there is a cleaner approach,
+         if(!random_direction_requester.empty()){
+            auto delta_direction = random_direction_requester(Action::RequestRandomNeighbor);
+            auto next_position = graph_neighbor_requester(Action::RequestConnectedNeighbor, *position, delta_direction);
+            //[x]next: define proper way to pass two world positions for the graph map, specifying positions could work but check if there is a cleaner approach,
             //        explore the possibilities
-            position->x += delta_position->x;
-            position->y += delta_position->y;
+            // position->x += delta_position->x;asdasd
+            // position->y += delta_position->y;asdasd
             // std::cerr << "thing positions updated" << std::endl;
          } else {
-            std::cout << "Skipping action_position_emitter(Action::RequestRandomNeighbor) because no connections. :(" << std::endl;
+            std::cout << "Skipping random_direction_requester(Action::RequestRandomNeighbor) because no connections. :(" << std::endl;
          }
          // std::cout << "This action_position_emitter is associated with num_slots: " << action_position_emitter.num_slots() << std::endl;
          // std::cerr << "after requesting random neighbor" << std::endl;

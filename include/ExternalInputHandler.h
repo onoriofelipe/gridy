@@ -11,6 +11,7 @@
 class ExternalInputHandler {
 public:
    ExternalInputHandler(){
+      register_handlers();
       char_button_map = {
          {'w', Button::W},
          {'W', Button::W},
@@ -38,9 +39,6 @@ public:
          {27, '\x1B'}, // esc key
          {0, '\0'} // metacode for quitting the input loop
       };
-      action_handler.register_action_handler(Action::HandleInputs, [this](){
-         handle_inputs();
-      });
    }
    // [x]not really a scancode, but leave the abstraction later for arrows?
    char map_scancode_to_ascii(int scancode){
@@ -75,6 +73,11 @@ public:
          }
       }
       // std::cerr << "finished while in handle_inputs()" << std::endl;
+   }
+   void register_handlers(){
+      action_handler.register_action_handler(Action::HandleInputs, [this](){
+         handle_inputs();
+      });
    }
    action_emitter_t action_emitter;
    ActionHandler<void> action_handler;

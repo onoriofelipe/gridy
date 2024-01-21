@@ -19,15 +19,21 @@ public:
    int_distribution{-1, 1},
    neighbor_distribution{0, 7}
    {
-      action_handler.register_action_handler(Action::RequestRandomNeighbor, [this](/*std::shared_ptr<Position> p*/) -> Position {
-         return generate_random_neighbor_delta();
-      });
+      register_handlers();
    }
    std::random_device rd;
    std::mt19937 engine;
    std::uniform_real_distribution<float> float_distribution;
    std::uniform_int_distribution<int32_t> int_distribution;
    std::uniform_int_distribution<int32_t> neighbor_distribution;
+
+   ///[]TODO: enforce the pattern of registration, maybe with interface, maybe some other way,
+   ///        break if not implemented during compile time, break during runtime if not called
+   void register_handlers(){
+      random_direction_request_handler.register_action_handler(Action::RequestRandomNeighbor, [this](/*std::shared_ptr<Position> p*/) -> Direction {
+         return generate_random_direction();
+      });
+   }
 
    // for now, return one of eight neighbors, with coords -1 or 0 or 1 for x and y
    ///[]TODO: substitute for random direction instead
@@ -53,7 +59,7 @@ public:
       return directions[random_int];
    }
 
-   ActionHandler<Position> action_handler;
+   ActionHandler<Direction> random_direction_request_handler;
 
    ///[]TODO: neighbor API: should it be defined in terms of absolute position or in terms of deltas?
    //         deltas for now, then it becomes more generic... maybe try both approaches later, but it really

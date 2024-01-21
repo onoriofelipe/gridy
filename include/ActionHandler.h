@@ -3,6 +3,7 @@
 
 #include <map>
 #include <functional>
+#include <utility>
 #include "Enums.h"
 
 // Listen for input events which are emitted by some loop processor
@@ -11,78 +12,106 @@
 //         such as complex combat events?
 ///[]TODO: maybe use variant for return type instead of hardcoding types handled
 //         with different pipelines
-///[]TODO: use perfect forwarding  and variadic template 
+///[x]TODO: use perfect forwarding and variadic template
 ///        to replace all the redundant
 ///        pseudo-overloads
-template <typename R, typename Arg>
+///        [x]it works!!! https://godbolt.org/z/5vd18rq8P
+///   []TODO: think if there's a way to conveniently allow multiple types to be
+///           collapsed so we don't need a single ActionHandler for each different
+///           combination type; even if there' some overhead this could be acceptable;
+///           and even if the types have to be hardcoded beforehand, like with std::variant
+
+template <typename R, typename ...Args>
 class ActionHandler {
 public:
    template <typename F>
    void register_action_handler(Action action, F&& handler){
-      action_map[action] = std::function<R(Arg)>(handler);
+      action_map[action] = std::function<R(Args&&...)>(handler);
    }
-   R on_action(Action action, Arg arg){
+   R on_action(Action action, Args&&... args){
       auto it = action_map.find(action);
       if(it != action_map.end()){
-         return (it->second)(arg);
+         return (it->second)(std::forward<Args>(args)...);
       }
       std::cout << "Action not found in ActionHandler<R,Arg>, returning default!!!" << std::endl;
-      std::cerr << "Action not found in ActionHandler<R,Arg>, returning default!!!" << std::endl;
+    //   std::cerr << "Action not found in ActionHandler<R,Arg>, returning default!!!" << std::endl;
       return R();
    }
-   std::map<Action,std::function<R(Arg)>> action_map{};
-};
-template <typename R>
-class ActionHandler {
-public:
-   template <typename F>
-   void register_action_handler(Action action, F&& handler){
-      action_map[action] = std::function<R(void)>(handler);
-   }
-   // template <typename F, typename R>
-   // void register_action_handler_with_return(Action action, F&& handler){
-   //    static std::map<Action, std::function<R(void)>> action_map_with_return{};
-   //    action_map_with_return[action] = std::function<R(void)>(handler);
-   // }
-   // void on_action(Action action){
-   //    auto it = action_map.find(action);
-   //    if(it != action_map.end()){
-   //       // call action callback
-   //       (it->second)();
-   //    }
-   // }
-   // template <typename R>
-   R on_action(Action action){
-      auto it = action_map.find(action);
-      if(it != action_map.end()){
-         // call action callback
-         // std::cout << "found action in ActionHandler<R>" << std::endl;
-         // std::cerr << "found action in ActionHandler<R>" << std::endl;
-         return (it->second)();
-      }
-      std::cout << "Action not found in ActionHandler<R>, returning default!!!" << std::endl;
-      std::cerr << "Action not found in ActionHandler<R>, returning default!!!" << std::endl;
-      return R();
-   }
-   std::map<Action, std::function<R(void)>> action_map{};
+   std::map<Action,std::function<R(Args...)>> action_map{};
 };
 
-template <>
-class ActionHandler<void> {
-public:
-   template <typename F>
-   void register_action_handler(Action action, F&& handler){
-      action_map[action] = std::function<void(void)>(handler);
-   }
+// usage that should be accepted:
+// ActionHandler<Position, Position, Position> action_handler;
+// ActionHandler<Result, Position, Health, Kind> action_handler;
+// template <typename R, typename ...Args>
+// class ActionHandler {
+// public:
+//    template <typename F>
+//    void register_action_handler(Action action, F&& handler){
+//       action_map[action] = std::function<R(Args)>(handler);
+//    }
+//    R on_action(Action action, Args&&... args){
+//       auto it = action_map.find(action);
+//       if(it != action_map.end()){
+//          return (it->second)(std::forward<Args>(args)...);
+//       }
+//       std::cout << "Action not found in ActionHandler<R,Arg>, returning default!!!" << std::endl;
+//       std::cerr << "Action not found in ActionHandler<R,Arg>, returning default!!!" << std::endl;
+//       return R();
+//    }
+//    std::map<Action,std::function<R(Args...)>> action_map{};
+// };
+// template <typename R>
+// class ActionHandler {
+// public:
+//    template <typename F>
+//    void register_action_handler(Action action, F&& handler){
+//       action_map[action] = std::function<R(void)>(handler);
+//    }
+//    // template <typename F, typename R>
+//    // void register_action_handler_with_return(Action action, F&& handler){
+//    //    static std::map<Action, std::function<R(void)>> action_map_with_return{};
+//    //    action_map_with_return[action] = std::function<R(void)>(handler);
+//    // }
+//    // void on_action(Action action){
+//    //    auto it = action_map.find(action);
+//    //    if(it != action_map.end()){
+//    //       // call action callback
+//    //       (it->second)();
+//    //    }
+//    // }
+//    // template <typename R>
+//    R on_action(Action action){
+//       auto it = action_map.find(action);
+//       if(it != action_map.end()){
+//          // call action callback
+//          // std::cout << "found action in ActionHandler<R>" << std::endl;
+//          // std::cerr << "found action in ActionHandler<R>" << std::endl;
+//          return (it->second)();
+//       }
+//       std::cout << "Action not found in ActionHandler<R>, returning default!!!" << std::endl;
+//       std::cerr << "Action not found in ActionHandler<R>, returning default!!!" << std::endl;
+//       return R();
+//    }
+//    std::map<Action, std::function<R(void)>> action_map{};
+// };
 
-   void on_action(Action action){
-      auto it = action_map.find(action);
-      if(it != action_map.end()){
-         // call action callback
-         (it->second)();
-      }
-   }
-   std::map<Action, std::function<void(void)>> action_map{};
-};
+// template <>
+// class ActionHandler<void> {
+// public:
+//    template <typename F>
+//    void register_action_handler(Action action, F&& handler){
+//       action_map[action] = std::function<void(void)>(handler);
+//    }
+
+//    void on_action(Action action){
+//       auto it = action_map.find(action);
+//       if(it != action_map.end()){
+//          // call action callback
+//          (it->second)();
+//       }
+//    }
+//    std::map<Action, std::function<void(void)>> action_map{};
+// };
 
 #endif // __ACTION_HANDLER_H__
