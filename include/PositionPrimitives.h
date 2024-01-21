@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <memory>
+#include <iostream>
 
 struct Position {
    Position(int32_t x = 0, int32_t y = 0): x{x}, y{y} {}
@@ -19,6 +20,15 @@ Position operator+(Position p, Direction d){
    p.x += d.x;
    p.y += d.y;
    return p;
+}
+
+std::ostream& operator<<(std::ostream& os, const Position& p){
+   os << "<" << p.x << ","<< p.y << ">";
+   return os;
+}
+std::ostream& operator<<(std::ostream& os, const Direction& d){
+   os << "<" << d.x << ","<< d.y << ">";
+   return os;
 }
 
 namespace D {

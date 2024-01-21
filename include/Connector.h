@@ -72,6 +72,8 @@ public:
          stablish_connections();
          game_context_->do_game_loop();
          close_connections();
+      } else {
+         std::cout << "loaded graphmap from file was not valid! 🥲" << std::endl;
       }
    }
 
@@ -83,10 +85,10 @@ public:
       connections.push_back(input_handler_->action_emitter.connect([this](Action action){
          game_context_->action_handler.on_action(action);
       }));
-      connections.push_back(game_context_->action_emitter.connect([this](Action action){
+      connections.push_back(game_context_->draw_emitter.connect([this](Action action){
          screen_->action_handler.on_action(action);
       }));
-      connections.push_back(game_context_->action_emitter.connect([this](Action action){
+      connections.push_back(game_context_->handle_inputs_emitter.connect([this](Action action){
          input_handler_->action_handler.on_action(action);
       }));
       ///[]TODO: for drawing player should be treated like any other thing actually

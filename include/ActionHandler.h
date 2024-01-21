@@ -43,6 +43,7 @@ public:
       }
       ///[]TODO: decide error convention, should go anywhere it can be easily seen during debugging
       std::cout << "Action not found in ActionHandler<R,...Args>, returning default R()!!!" << std::endl;
+      std::cout << "Action: " << action << std::endl;
       // std::cerr << "Action not found in ActionHandler<R,Arg>, returning default!!!" << std::endl;
       return R();
    }

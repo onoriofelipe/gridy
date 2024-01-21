@@ -23,13 +23,13 @@ public:
       auto some_counter{0};
       while(!should_stop_loop){
          // std::cout << "inside game loop" << std::endl;
-         action_emitter(Action::HandleInputs);
+         handle_inputs_emitter(Action::HandleInputs);
          // std::cout << "inputs handled" << std::endl;
-         action_emitter(Action::Draw);
+         draw_emitter(Action::Draw);
          // std::cout << "things drawn" << std::endl;
          some_counter %= 30;
          if(some_counter == 0 ){
-            action_emitter(Action::SomeTicks);
+            // action_emitter(Action::SomeTicks);
             //\\ another concept: multiple event sources, maybe for different scopes
             // std::cout << "before move random" << std::endl;
             // std::cerr << "before move random" << std::endl;
@@ -55,7 +55,8 @@ public:
    }
    std::vector<std::shared_ptr<Thing>> things{};
    ActionHandler<void> action_handler;
-   action_emitter_t action_emitter;
+   action_emitter_t draw_emitter;
+   action_emitter_t handle_inputs_emitter;
    action_emitter_t event_generator;
 };
 

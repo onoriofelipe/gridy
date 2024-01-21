@@ -120,6 +120,7 @@ public:
             // position->x += delta_position->x;asdasd
             // position->y += delta_position->y;asdasd
             // std::cerr << "thing positions updated" << std::endl;
+            std::cout << "<random direction, old position, new position> " << "<" << delta_direction << "," << *position << "," << next_position << ">" << std::endl; 
             position->x = next_position.x;
             position->y = next_position.y;
          } else {

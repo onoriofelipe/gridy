@@ -76,7 +76,18 @@ void redirect_error_stream_to_file(){
    // never restore the original state! `-´
 }
 
-
+template <typename E>
+std::ostream& operator<<(std::ostream& os, const std::vector<E>& elements){
+   bool first_pass{true};
+   for(const E& element: elements){
+      if(!first_pass){
+         os << ",";
+      }
+      os << element;
+      first_pass = false;
+   }
+   return os;
+}
 
 
 #endif // __UTILS_H__
