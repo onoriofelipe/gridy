@@ -58,7 +58,7 @@ public:
       if(is_connected_neighbor(old_position, requested_position)){
          resulting_position = requested_position;
          ///[]TODO: debug in godbolt minimal graph neighbors for undirected graph
-         std::cout << "neighbors are connected!" << std::endl;
+         // std::cout << "neighbors are connected!" << std::endl;
       }
       return resulting_position;
    }
@@ -103,7 +103,7 @@ public:
       generate_map(map_name);
       result_valid = populate_map(map_name);
       connect_neighbors();
-      cerrprint_graph_and_indices();
+      // cerrprint_graph_and_indices();
       return result_valid;
    }
    void connect_neighbors();
@@ -170,8 +170,8 @@ bool GraphMap::populate_map(std::string map_name/*, boost::adjacency_list<>& g, 
       std::getline(map_file_stream, header_string);
       {
          std::stringstream header_string_stream(header_string);
-         header_string_stream >> width;
          header_string_stream >> height;
+         header_string_stream >> width;
       }
       if (width == 0 || height == 0){
          return parse_unsuccessful;
@@ -209,7 +209,7 @@ Tile map_char_to_tile(char c){
    Tile tile{};
    switch(c){
       case 'F':
-         tile = Tile{};
+         tile = Tile{TileType::Floor};
       case 'D':
       default:
          // already initialized to default, no redundancy
@@ -272,8 +272,14 @@ void GraphMap::cerrprint_graph_and_indices(){
    std::cerr << "tile_indexes: " << std::endl;
    std::cerr << tile_indexes << std::endl;
 
-   std::pair<boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS>::vertex_iterator,
-   boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS>::vertex_iterator> vs = boost::vertices(graph);
+   // std::pair<boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS>::vertex_iterator,
+   // boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS>::vertex_iterator> vs = boost::vertices(graph);
+   // std::copy(vs.first, vs.second,
+   // std::ostream_iterator<boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS>::vertex_descriptor>{
+   //    std::cerr, ","});
+
+   std::cerr << "boost::graph indexes: " << std::endl;
+   auto vs = boost::vertices(graph);
    std::copy(vs.first, vs.second,
    std::ostream_iterator<boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS>::vertex_descriptor>{
       std::cerr, ","});

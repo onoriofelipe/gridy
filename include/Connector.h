@@ -82,6 +82,9 @@ public:
       connections.push_back(input_handler_->action_emitter.connect([this](Action action){
          player_->action_handler.on_action(action);
       }));
+      connections.push_back(player_->graph_neighbor_requester.connect([=](Action action, Position position, Direction direction) -> Position {
+         return graph_map_->neighbor_request_handler.on_action(action, position, direction);
+      }));
       connections.push_back(input_handler_->action_emitter.connect([this](Action action){
          game_context_->action_handler.on_action(action);
       }));
