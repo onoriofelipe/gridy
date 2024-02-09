@@ -143,7 +143,7 @@ Vector3 operator*(const Vector3& b, float a){
    return a * b;
 }
 Vector3 operator/(const Vector3& b, float a){
-   return b * 1.0f/a;
+   return 1.0f/a * b;
 }
 
 Vector3 operator*(const Matrix3& m, const Vector3 v){

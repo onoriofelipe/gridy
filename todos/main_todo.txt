@@ -67,3 +67,17 @@
    []wasd
    []9 skills, double with modifier alt, 1,2,3,4,5,q,e,r,f
    []target nearest, modifier + direction to target closest to direction line
+[]terrain manipulation?
+   []digging, high effort low reward
+   []terrain manipulation spells, create water puddle or melt floor into lava,
+     set ground on fire, create acid puddle, make slippery icy floor,
+     make floor sticky, create wall, create stair, carve stair
+[]interactible party
+   []multiple characters; control is swappable; semi-independent characters
+      []basic default AI
+         []AI overridable with specific AI modes
+            []turret mode, tank mode, support mode, passive follow mode
+            []easy to swap, easy to toggle modes
+[]captureable and trainable monster system, like pokemon
+   []not too much rng-painful breeding
+   []study online pokemmo implemented systems

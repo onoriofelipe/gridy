@@ -29,6 +29,10 @@ public:
       draw_normalized(p.x, p.y);
    }
    void draw_line(const Line& l){
+   ///[]TODO: redo bresenham considering all simmetry cases from the beginning
+   //         instead of trying to patch it up along the way: do everything
+   //         in terms of abs, then if -1 < m < 0, mirror case of 0 < m < 1, and
+   //         then if m < -1, mirror case of m > 1 via multiplication by -1
 	// Bresenham
 	// initially treat only case of m < 1
 	// calc dx, dy
@@ -91,7 +95,6 @@ public:
    int64_t p = 2 * dy - dx;
    auto loop_x1 = std::min(x1,x2);
    auto loop_x2 = std::max(x1,x2);
-   // for (auto x = x1; x <= x2; /**/){
    for (auto x = loop_x1; x <= loop_x2; /**/){
       if(debug){
          std::cout << "p before iteration: " << p << std::endl;}
