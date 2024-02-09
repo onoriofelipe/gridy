@@ -5,6 +5,38 @@
 actual priority list of priorities for real
 
 current focus:
+*[]reading about behavior trees led me into a rabbit hole of game engine design
+   which includes AI, tasks, events, actions, all of their respective management,
+   and architecture in general. some components will be changed and integrated
+   to follow new conventions. progress will be merged for now, but an overhaul
+   should happen (mostly is sketched on paper but should be transferred here soon)
+   []sorting in priority order the following, maybe putting as sub-tasks of the
+      use cases list
+   []some isolated pieces tests, maybe interfaces
+   []tasks for behavior tree
+   []composite nodes for behavior tree
+   []a task queue
+   []a task manager for executing tasks in another thread
+   []a definition of what should happen each frame and the frequency for behavior
+      tree ticks
+   []a blackboard for the behavior tree data and communication
+   []a polling station as a general gateway for getting arbitrary data from
+      world entities
+   []half a dozen use cases to guide the implementation of the previously mentioned
+      features
+      []a random move request
+      []a move to direction X request
+      []a pathfinding from A to B request
+      []a way to use a pathfinding solution along arbitrary time durationm
+         consuming partial results each time
+      []thing A requests to attack thing B and the attack request goes to a
+         combat handler which calculates and applies the result in the game state
+      []a thing uses a spell which creates entities spread over multiple tiles,
+         like fire on the floor
+      []behavior tree hello world with markov-chain states
+   []a combat handler
+   []an entity and its component set convention
+   []behavior trees
 *[]think about a behavior tree
    []some tree data structure, scanned using depth first when being executed
       []each subnode is a vector ordered from left to right
