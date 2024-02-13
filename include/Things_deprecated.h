@@ -17,7 +17,7 @@
 using random_direction_requester_t = boost::signals2::signal<Direction(Action)>;
 using graph_neighbor_requester_t = boost::signals2::signal<Position(Action, Position, Direction)>;
 
-///[]TODO: check if 64 bits is virtually infinite things or if we need 128 bits
+///[]TODO: check if 64 bits is virtually infinite things or ir we need 128 bits
 // ids: this system of identification will be used when one entity needs to
 //      refer to another but they don't know anything about each other;
 ///[]TODO: consider the pros and cons of having a global array or vector of
@@ -26,7 +26,7 @@ struct ID {
 public:
    ID(uint64_t id): id{id} {}
    static uint64_t generate_id(){
-      static uint64_t counter = 0;
+      static std::atomic<uint64_t> counter = 0;
       ++counter;
       return counter;
    }
@@ -36,44 +36,36 @@ public:
 // the eponymous game object, which has been lovingly named Thing here
 class Thing {
 public:
-   Thing():
-            // std::shared_ptr<Position> p,
-            // std::shared_ptr<Representation> r,
-            // const Health& health,
-            // const Attributes& attributes,
-            // std::shared_ptr<DrawingComponent> d):
-            // position{p},
-            // representation{r},
-            // health{health},
-            // attributes{attributes},
-            // drawing_component{d},
+   Thing(   std::shared_ptr<Position> p,
+            std::shared_ptr<Representation> r,
+            const Health& health,
+            const Attributes& attributes,
+            std::shared_ptr<DrawingComponent> d):
+            position{p},
+            representation{r},
+            health{health},
+            attributes{attributes},
+            drawing_component{d},
             id{ID::generate_id()}
    {
-      // initialize_components();
-      // Thing::register_handlers();
+      Thing::register_handlers();
    }
    void move_to_direction(Direction direction){
-      // Position next_position = *graph_neighbor_requester(Action::RequestConnectedNeighbor, *position, direction);
-      // position->x = next_position.x;
-      // position->y = next_position.y;
+      Position next_position = *graph_neighbor_requester(Action::RequestConnectedNeighbor, *position, direction);
+      position->x = next_position.x;
+      position->y = next_position.y;
    }
-
-   // std::shared_ptr<Position> position;
-   // std::shared_ptr<Representation> representation;
-   // Health health;
-   // Attributes attributes;
-   // std::shared_ptr<DrawingComponent> drawing_component;
+   std::shared_ptr<Position> position;
+   std::shared_ptr<Representation> representation;
+   Health health;
+   Attributes attributes;
+   std::shared_ptr<DrawingComponent> drawing_component;
    ID id;
-   // ActionHandler<void> action_handler;
-   // action_emitter_t action_emitter;
-   // random_direction_requester_t random_direction_requester;
-   // graph_neighbor_requester_t graph_neighbor_requester;
+   ActionHandler<void> action_handler;
+   action_emitter_t action_emitter;
+   random_direction_requester_t random_direction_requester;
+   graph_neighbor_requester_t graph_neighbor_requester;
 
-   std::vector<std::shared_ptr<IComponent>> components{ComponentType::NumberOf, nullptr };
-   void install_component(std::shared_ptr<IComponent> component){
-      ///[]TODO: do move to avoid extra shared_ptr copy and reference count change
-      components[component.type] = component;
-   }
    virtual void register_handlers(){
       //    action_handler.register_action_handler(Action::MoveRandom, [this](){
       //    // std::cerr << "before requesting random neighbor" << std::endl;
@@ -97,18 +89,18 @@ public:
       // });
       // for now, initially all things are moveable as long as they receive the order
       ///[]TODO: watch out for memory explosion or fragmentation
-      // action_handler.register_action_handler(Action::MoveUp, [this](){
-      //    move_to_direction(D::N);
-      // });
-      // action_handler.register_action_handler(Action::MoveLeft, [this](){
-      //    move_to_direction(D::W);
-      // });
-      // action_handler.register_action_handler(Action::MoveDown, [this](){
-      //    move_to_direction(D::S);
-      // });
-      // action_handler.register_action_handler(Action::MoveRight, [this](){
-      //    move_to_direction(D::E);
-      // });
+      action_handler.register_action_handler(Action::MoveUp, [this](){
+         move_to_direction(D::N);
+      });
+      action_handler.register_action_handler(Action::MoveLeft, [this](){
+         move_to_direction(D::W);
+      });
+      action_handler.register_action_handler(Action::MoveDown, [this](){
+         move_to_direction(D::S);
+      });
+      action_handler.register_action_handler(Action::MoveRight, [this](){
+         move_to_direction(D::E);
+      });
    }
 };
 

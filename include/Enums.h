@@ -6,6 +6,16 @@
 #include <string>
 #include <boost/signals2.hpp>
 
+// each enum value defines an interface to be followed
+enum ComponentType: unsigned char {
+   Uninitialized,
+   Position,
+   Representation,
+   Health,
+   Attributes,
+   NumberOf,
+};
+
 ///[]TODO: for the problem of _runtime_ component connection (maybe should be the standard for
 //         all game entities, even static ones at the level of the game):
 //         request connection should be the de-facto standard API for connecting different

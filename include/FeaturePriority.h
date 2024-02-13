@@ -5,6 +5,9 @@
 actual priority list of priorities for real
 
 current focus:
+*[]microlist for implementing the current plan:
+   []thing revamp
+   []
 *[]reading about behavior trees led me into a rabbit hole of game engine design
    which includes AI, tasks, events, actions, all of their respective management,
    and architecture in general. some components will be changed and integrated

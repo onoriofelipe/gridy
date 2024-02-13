@@ -2,6 +2,7 @@
 #define  __COMPONENTS_H__
 
 #include <memory>
+#include "Enums.h"
 #include "AsciiScreen.h"
 #include "PositionPrimitives.h"
 
@@ -15,9 +16,17 @@
 //         are implemented. for now, deal with the troubles related to subtraction with
 //         unsigned integer modular arithmetic
 
+class IComponent {
+public:
+   virtual void aardvark() = 0;
+   ComponentType type{ComponentType::Uninitialized};
+protected:
+   IComponent(ComponentType type): type{type} {}
+};
 
-struct Representation {
-   Representation(char c): c{c} {}
+
+struct Representation: public IComponent {
+   Representation(char c): IComponent(ComponentType::Representation), c{c} {}
    char c{'X'};
    char ascii(){
       return c;

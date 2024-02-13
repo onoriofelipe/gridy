@@ -3,6 +3,8 @@
 
 #include <algorithm> // std::clamp
 #include <limits> // std::numeric_limits
+#include "Enums.h"
+#include "Components.h"
 
 ///[]TODO: redefine behavior that is specified by groups of components as a system:
 //         for example drawing should be defined as the behavior done by the collection
@@ -13,6 +15,24 @@
 //         boost::signals, after the mechanism has been tried and fitted and properly
 //         examined in terms of boilerplate required vs advantages gained, comparing
 //         a few different approaches
+
+class ISystem {
+public:
+   virtual void run_system(const std::vector<IComponent>& components) = 0; // return bool?
+   // the idea is to send the requirements list to a thing (or something else) which
+   // will then return a list of pointers to the components fulfilling those
+   // requirements
+   std::vector<ComponentType> requirements{}; // types required by this system
+   void gather_entity_requirements(ID id){
+      components = request_
+      if (std::all_of(components.begin(), components.end(), [](std::shared_ptr<IComponent>& p){ return nullptr != p; })){
+         run_system(components);
+      }
+
+   }
+   {
+   }
+};
 
 uint32_t uniform_rand(uint32_t basic){
    // auto mt = std::mersenne_twister_thingy

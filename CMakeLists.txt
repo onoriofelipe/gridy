@@ -44,6 +44,7 @@ target_sources(gridy PUBLIC   ./main.cpp
                               include/RandomGenerator.h
                               include/GraphMap.h
                               include/PositionPrimitives.h
+                              include/PollingStation.h
 )
 target_compile_options(gridy PRIVATE -Wall)
 # if(NOT CURSES_FOUND)
