@@ -6,8 +6,16 @@ actual priority list of priorities for real
 
 current focus:
 *[]microlist for implementing the current plan:
+   []define one simple system that follows ISystem interface, will be used later
+      as a template for other systems
+      []define two or three components that will be used for it
+      []implement use case editing the main function, ignore the graphics if necessary
+   []use polling station as something that condenses the roles of entity manager
+      and component lookup, possibly for systems?
+   []make all components obey the IComponent interface
+      []ignore extra methods
+      []after this step is finished, cleanup
    []thing revamp
-   []
 *[]reading about behavior trees led me into a rabbit hole of game engine design
    which includes AI, tasks, events, actions, all of their respective management,
    and architecture in general. some components will be changed and integrated
